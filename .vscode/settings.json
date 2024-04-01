@@ -1,0 +1,24 @@
+{
+  "cSpell.words": [
+    "anythingllm",
+    "Astra",
+    "comkey",
+    "Dockerized",
+    "Embeddable",
+    "GROQ",
+    "hljs",
+    "inferencing",
+    "Langchain",
+    "Milvus",
+    "Mintplex",
+    "Ollama",
+    "openai",
+    "openrouter",
+    "Qdrant",
+    "vectordbs",
+    "Weaviate",
+    "Zilliz"
+  ],
+  "eslint.experimental.useFlatConfig": true,
+  "docker.languageserver.formatter.ignoreMultilineInstructions": true
+}
