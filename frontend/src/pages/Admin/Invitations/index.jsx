@@ -3,16 +3,16 @@ import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { UserPlus } from "@phosphor-icons/react";
+import { EnvelopeSimple } from "@phosphor-icons/react";
+import usePrefersDarkMode from "@/hooks/usePrefersDarkMode";
 import Admin from "@/models/admin";
-import UserRow from "./UserRow";
-import useUser from "@/hooks/useUser";
-import NewUserModal from "./NewUserModal";
+import InviteRow from "./InviteRow";
+import NewInviteModal from "./NewInviteModal";
 import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
 
-export default function AdminUsers() {
+export default function AdminInvites() {
   const { isOpen, openModal, closeModal } = useModal();
 
   return (
@@ -25,41 +25,43 @@ export default function AdminUsers() {
         <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
             <div className="items-center flex gap-x-4">
-              <p className="text-lg leading-6 font-bold text-white">Users</p>
+              <p className="text-lg leading-6 font-bold text-white">
+                Invitations
+              </p>
             </div>
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-              These are all the accounts which have an account on this instance.
-              Removing an account will instantly remove their access to this
-              instance.
+              Create invitation links for people in your organization to accept
+              and sign up with. Invitations can only be used by a single user.
             </p>
           </div>
           <div className="w-full justify-end flex">
-            <CTAButton onClick={openModal} className="mt-3 mr-0 -mb-6 z-10">
-              <UserPlus className="h-4 w-4" weight="bold" /> Add user
+            <CTAButton onClick={openModal} className="mt-3 mr-0 -mb-12 z-10">
+              <EnvelopeSimple className="h-4 w-4" weight="bold" /> Create Invite
+              Link
             </CTAButton>
           </div>
-          <UsersContainer />
+          <InvitationsContainer />
         </div>
         <ModalWrapper isOpen={isOpen}>
-          <NewUserModal closeModal={closeModal} />
+          <NewInviteModal closeModal={closeModal} />
         </ModalWrapper>
       </div>
     </div>
   );
 }
 
-function UsersContainer() {
-  const { user: currUser } = useUser();
+function InvitationsContainer() {
+  const darkMode = usePrefersDarkMode();
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState([]);
+  const [invites, setInvites] = useState([]);
 
   useEffect(() => {
-    async function fetchUsers() {
-      const _users = await Admin.users();
-      setUsers(_users);
+    async function fetchInvites() {
+      const _invites = await Admin.invites();
+      setInvites(_invites);
       setLoading(false);
     }
-    fetchUsers();
+    fetchInvites();
   }, []);
 
   if (loading) {
@@ -77,17 +79,20 @@ function UsersContainer() {
   }
 
   return (
-    <table className="w-full text-sm text-left rounded-lg">
+    <table className="w-full text-sm text-left rounded-lg mt-6">
       <thead className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white border-b border-opacity-60">
         <tr>
           <th scope="col" className="px-6 py-3 rounded-tl-lg">
-            Username
+            Status
           </th>
           <th scope="col" className="px-6 py-3">
-            Role
+            Accepted By
           </th>
           <th scope="col" className="px-6 py-3">
-            Date Added
+            Created By
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Created
           </th>
           <th scope="col" className="px-6 py-3 rounded-tr-lg">
             {" "}
@@ -95,43 +100,10 @@ function UsersContainer() {
         </tr>
       </thead>
       <tbody>
-        {users.map((user) => (
-          <UserRow key={user.id} currUser={currUser} user={user} />
+        {invites.map((invite) => (
+          <InviteRow key={invite.id} invite={invite} />
         ))}
       </tbody>
     </table>
-  );
-}
-
-const ROLE_HINT = {
-  default: [
-    "Can only send chats with workspaces they are added to by admin or managers.",
-    "Cannot modify any settings at all.",
-  ],
-  manager: [
-    "Can view, create, and delete any workspaces and modify workspace-specific settings.",
-    "Can create, update and invite new users to the instance.",
-    "Cannot modify LLM, vectorDB, embedding, or other connections.",
-  ],
-  admin: [
-    "Highest user level privilege.",
-    "Can see and do everything across the system.",
-  ],
-};
-
-export function RoleHintDisplay({ role }) {
-  return (
-    <div className="flex flex-col gap-y-1 py-1 pb-4">
-      <p className="text-sm font-medium text-white">Permissions</p>
-      <ul className="flex flex-col gap-y-1 list-disc px-4">
-        {ROLE_HINT[role ?? "default"].map((hints, i) => {
-          return (
-            <li key={i} className="text-xs text-white/60">
-              {hints}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
   );
 }
