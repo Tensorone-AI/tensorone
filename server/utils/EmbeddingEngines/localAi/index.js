@@ -1,21 +1,25 @@
-const { toChunks } = require("../../helpers");
+const { toChunks, maximumChunkLength } = require("../../helpers");
 
-class OpenAiEmbedder {
+class LocalAiEmbedder {
   constructor() {
     const { Configuration, OpenAIApi } = require("openai");
-    if (!process.env.OPEN_AI_KEY) throw new Error("No OpenAI API key was set.");
+    if (!process.env.EMBEDDING_BASE_PATH)
+      throw new Error("No embedding base path was set.");
+    if (!process.env.EMBEDDING_MODEL_PREF)
+      throw new Error("No embedding model was set.");
     const config = new Configuration({
-      apiKey: process.env.OPEN_AI_KEY,
+      basePath: process.env.EMBEDDING_BASE_PATH,
+      ...(!!process.env.LOCAL_AI_API_KEY
+        ? {
+            apiKey: process.env.LOCAL_AI_API_KEY,
+          }
+        : {}),
     });
-    const openai = new OpenAIApi(config);
-    this.openai = openai;
-    this.model = process.env.EMBEDDING_MODEL_PREF || "text-embedding-ada-002";
+    this.openai = new OpenAIApi(config);
 
     // Limit of how many strings we can process in a single pass to stay with resource or network limits
-    this.maxConcurrentChunks = 500;
-
-    // https://platform.openai.com/docs/guides/embeddings/embedding-models
-    this.embeddingMaxChunkLength = 8_191;
+    this.maxConcurrentChunks = 50;
+    this.embeddingMaxChunkLength = maximumChunkLength();
   }
 
   async embedTextInput(textInput) {
@@ -26,16 +30,13 @@ class OpenAiEmbedder {
   }
 
   async embedChunks(textChunks = []) {
-    // Because there is a hard POST limit on how many chunks can be sent at once to OpenAI (~8mb)
-    // we concurrently execute each max batch of text chunks possible.
-    // Refer to constructor maxConcurrentChunks for more info.
     const embeddingRequests = [];
     for (const chunk of toChunks(textChunks, this.maxConcurrentChunks)) {
       embeddingRequests.push(
         new Promise((resolve) => {
           this.openai
             .createEmbedding({
-              model: this.model,
+              model: process.env.EMBEDDING_MODEL_PREF,
               input: chunk,
             })
             .then((res) => {
@@ -56,7 +57,7 @@ class OpenAiEmbedder {
     const { data = [], error = null } = await Promise.all(
       embeddingRequests
     ).then((results) => {
-      // If any errors were returned from OpenAI abort the entire sequence because the embeddings
+      // If any errors were returned from LocalAI abort the entire sequence because the embeddings
       // will be incomplete.
       const errors = results
         .filter((res) => !!res.error)
@@ -79,7 +80,7 @@ class OpenAiEmbedder {
       };
     });
 
-    if (!!error) throw new Error(`OpenAI Failed to embed: ${error}`);
+    if (!!error) throw new Error(`LocalAI Failed to embed: ${error}`);
     return data.length > 0 &&
       data.every((embd) => embd.hasOwnProperty("embedding"))
       ? data.map((embd) => embd.embedding)
@@ -88,5 +89,5 @@ class OpenAiEmbedder {
 }
 
 module.exports = {
-  OpenAiEmbedder,
+  LocalAiEmbedder,
 };
