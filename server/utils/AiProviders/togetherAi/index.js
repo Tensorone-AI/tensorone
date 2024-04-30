@@ -1,27 +1,34 @@
-const { NativeEmbedder } = require("../../EmbeddingEngines/native");
 const { chatPrompt } = require("../../chats");
 const {
   handleDefaultStreamResponseV2,
 } = require("../../helpers/chat/responses");
 
-class GroqLLM {
-  constructor(embedder = null, modelPreference = null) {
-    const { OpenAI: OpenAIApi } = require("openai");
-    if (!process.env.GROQ_API_KEY) throw new Error("No Groq API key was set.");
+function togetherAiModels() {
+  const { MODELS } = require("./models.js");
+  return MODELS || {};
+}
 
+class TogetherAiLLM {
+  constructor(embedder = null, modelPreference = null) {
+    if (!process.env.TOGETHER_AI_API_KEY)
+      throw new Error("No TogetherAI API key was set.");
+    const { OpenAI: OpenAIApi } = require("openai");
     this.openai = new OpenAIApi({
-      baseURL: "https://api.groq.com/openai/v1",
-      apiKey: process.env.GROQ_API_KEY,
+      baseURL: "https://api.together.xyz/v1",
+      apiKey: process.env.TOGETHER_AI_API_KEY ?? null,
     });
-    this.model =
-      modelPreference || process.env.GROQ_MODEL_PREF || "llama3-8b-8192";
+    this.model = modelPreference || process.env.TOGETHER_AI_MODEL_PREF;
     this.limits = {
       history: this.promptWindowLimit() * 0.15,
       system: this.promptWindowLimit() * 0.15,
       user: this.promptWindowLimit() * 0.7,
     };
 
-    this.embedder = !embedder ? new NativeEmbedder() : embedder;
+    if (!embedder)
+      throw new Error(
+        "INVALID TOGETHER AI SETUP. No embedding engine has been set. Go to instance settings and set up an embedding interface to use Together AI as your LLM."
+      );
+    this.embedder = embedder;
     this.defaultTemp = 0.7;
   }
 
@@ -37,40 +44,24 @@ class GroqLLM {
     );
   }
 
+  allModelInformation() {
+    return togetherAiModels();
+  }
+
   streamingEnabled() {
     return "streamChat" in this && "streamGetChatCompletion" in this;
   }
 
+  // Ensure the user set a value for the token limit
+  // and if undefined - assume 4096 window.
   promptWindowLimit() {
-    switch (this.model) {
-      case "mixtral-8x7b-32768":
-        return 32_768;
-      case "llama3-8b-8192":
-        return 8192;
-      case "llama3-70b-8192":
-        return 8192;
-      case "gemma-7b-it":
-        return 8192;
-      default:
-        return 8192;
-    }
+    const availableModels = this.allModelInformation();
+    return availableModels[this.model]?.maxLength || 4096;
   }
 
-  async isValidChatCompletionModel(modelName = "") {
-    const validModels = [
-      "mixtral-8x7b-32768",
-      "llama3-8b-8192",
-      "llama3-70b-8192",
-      "gemma-7b-it",
-    ];
-    const isPreset = validModels.some((model) => modelName === model);
-    if (isPreset) return true;
-
-    const model = await this.openai.models
-      .retrieve(modelName)
-      .then((modelObj) => modelObj)
-      .catch(() => null);
-    return !!model;
+  async isValidChatCompletionModel(model = "") {
+    const availableModels = this.allModelInformation();
+    return availableModels.hasOwnProperty(model);
   }
 
   constructPrompt({
@@ -94,7 +85,7 @@ class GroqLLM {
   async sendChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
-        `Groq chat: ${this.model} is not valid for chat completion!`
+        `Together AI chat: ${this.model} is not valid for chat completion!`
       );
 
     const textResponse = await this.openai.chat.completions
@@ -113,14 +104,14 @@ class GroqLLM {
       })
       .then((result) => {
         if (!result.hasOwnProperty("choices"))
-          throw new Error("GroqAI chat: No results!");
+          throw new Error("Together AI chat: No results!");
         if (result.choices.length === 0)
-          throw new Error("GroqAI chat: No results length!");
+          throw new Error("Together AI chat: No results length!");
         return result.choices[0].message.content;
       })
       .catch((error) => {
         throw new Error(
-          `GroqAI::createChatCompletion failed with: ${error.message}`
+          `TogetherAI::createChatCompletion failed with: ${error.message}`
         );
       });
 
@@ -130,7 +121,7 @@ class GroqLLM {
   async streamChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
-        `GroqAI:streamChat: ${this.model} is not valid for chat completion!`
+        `TogetherAI chat: ${this.model} is not valid for chat completion!`
       );
 
     const streamRequest = await this.openai.chat.completions.create({
@@ -153,18 +144,14 @@ class GroqLLM {
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
-        `GroqAI:chatCompletion: ${this.model} is not valid for chat completion!`
+        `TogetherAI chat: ${this.model} is not valid for chat completion!`
       );
 
-    const result = await this.openai.chat.completions
-      .create({
-        model: this.model,
-        messages,
-        temperature,
-      })
-      .catch((e) => {
-        throw new Error(e.response.data.error.message);
-      });
+    const result = await this.openai.chat.completions.create({
+      model: this.model,
+      messages,
+      temperature,
+    });
 
     if (!result.hasOwnProperty("choices") || result.choices.length === 0)
       return null;
@@ -174,7 +161,7 @@ class GroqLLM {
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
     if (!(await this.isValidChatCompletionModel(this.model)))
       throw new Error(
-        `GroqAI:streamChatCompletion: ${this.model} is not valid for chat completion!`
+        `TogetherAI chat: ${this.model} is not valid for chat completion!`
       );
 
     const streamRequest = await this.openai.chat.completions.create({
@@ -206,5 +193,6 @@ class GroqLLM {
 }
 
 module.exports = {
-  GroqLLM,
+  TogetherAiLLM,
+  togetherAiModels,
 };

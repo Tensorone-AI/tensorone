@@ -1,27 +1,38 @@
-const { NativeEmbedder } = require("../../EmbeddingEngines/native");
 const { chatPrompt } = require("../../chats");
 const {
   handleDefaultStreamResponseV2,
 } = require("../../helpers/chat/responses");
 
-class GroqLLM {
-  constructor(embedder = null, modelPreference = null) {
-    const { OpenAI: OpenAIApi } = require("openai");
-    if (!process.env.GROQ_API_KEY) throw new Error("No Groq API key was set.");
+//  hybrid of openAi LLM chat completion for LMStudio
+class LMStudioLLM {
+  constructor(embedder = null, _modelPreference = null) {
+    if (!process.env.LMSTUDIO_BASE_PATH)
+      throw new Error("No LMStudio API Base Path was set.");
 
-    this.openai = new OpenAIApi({
-      baseURL: "https://api.groq.com/openai/v1",
-      apiKey: process.env.GROQ_API_KEY,
+    const { OpenAI: OpenAIApi } = require("openai");
+    this.lmstudio = new OpenAIApi({
+      baseURL: process.env.LMSTUDIO_BASE_PATH?.replace(/\/+$/, ""), // here is the URL to your LMStudio instance
+      apiKey: null,
     });
-    this.model =
-      modelPreference || process.env.GROQ_MODEL_PREF || "llama3-8b-8192";
+
+    // Prior to LMStudio 0.2.17 the `model` param was not required and you could pass anything
+    // into that field and it would work. On 0.2.17 LMStudio introduced multi-model chat
+    // which now has a bug that reports the server model id as "Loaded from Chat UI"
+    // and any other value will crash inferencing. So until this is patched we will
+    // try to fetch the `/models` and have the user set it, or just fallback to "Loaded from Chat UI"
+    // which will not impact users with <v0.2.17 and should work as well once the bug is fixed.
+    this.model = process.env.LMSTUDIO_MODEL_PREF || "Loaded from Chat UI";
     this.limits = {
       history: this.promptWindowLimit() * 0.15,
       system: this.promptWindowLimit() * 0.15,
       user: this.promptWindowLimit() * 0.7,
     };
 
-    this.embedder = !embedder ? new NativeEmbedder() : embedder;
+    if (!embedder)
+      throw new Error(
+        "INVALID LM STUDIO SETUP. No embedding engine has been set. Go to instance settings and set up an embedding interface to use LMStudio as your LLM."
+      );
+    this.embedder = embedder;
     this.defaultTemp = 0.7;
   }
 
@@ -41,36 +52,19 @@ class GroqLLM {
     return "streamChat" in this && "streamGetChatCompletion" in this;
   }
 
+  // Ensure the user set a value for the token limit
+  // and if undefined - assume 4096 window.
   promptWindowLimit() {
-    switch (this.model) {
-      case "mixtral-8x7b-32768":
-        return 32_768;
-      case "llama3-8b-8192":
-        return 8192;
-      case "llama3-70b-8192":
-        return 8192;
-      case "gemma-7b-it":
-        return 8192;
-      default:
-        return 8192;
-    }
+    const limit = process.env.LMSTUDIO_MODEL_TOKEN_LIMIT || 4096;
+    if (!limit || isNaN(Number(limit)))
+      throw new Error("No LMStudio token context limit was set.");
+    return Number(limit);
   }
 
-  async isValidChatCompletionModel(modelName = "") {
-    const validModels = [
-      "mixtral-8x7b-32768",
-      "llama3-8b-8192",
-      "llama3-70b-8192",
-      "gemma-7b-it",
-    ];
-    const isPreset = validModels.some((model) => modelName === model);
-    if (isPreset) return true;
-
-    const model = await this.openai.models
-      .retrieve(modelName)
-      .then((modelObj) => modelObj)
-      .catch(() => null);
-    return !!model;
+  async isValidChatCompletionModel(_ = "") {
+    // LMStudio may be anything. The user must do it correctly.
+    // See comment about this.model declaration in constructor
+    return true;
   }
 
   constructPrompt({
@@ -92,12 +86,12 @@ class GroqLLM {
   }
 
   async sendChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
+    if (!this.model)
       throw new Error(
-        `Groq chat: ${this.model} is not valid for chat completion!`
+        `LMStudio chat: ${this.model} is not valid or defined for chat completion!`
       );
 
-    const textResponse = await this.openai.chat.completions
+    const textResponse = await this.lmstudio.chat.completions
       .create({
         model: this.model,
         temperature: Number(workspace?.openAiTemp ?? this.defaultTemp),
@@ -113,14 +107,14 @@ class GroqLLM {
       })
       .then((result) => {
         if (!result.hasOwnProperty("choices"))
-          throw new Error("GroqAI chat: No results!");
+          throw new Error("LMStudio chat: No results!");
         if (result.choices.length === 0)
-          throw new Error("GroqAI chat: No results length!");
+          throw new Error("LMStudio chat: No results length!");
         return result.choices[0].message.content;
       })
       .catch((error) => {
         throw new Error(
-          `GroqAI::createChatCompletion failed with: ${error.message}`
+          `LMStudio::createChatCompletion failed with: ${error.message}`
         );
       });
 
@@ -128,16 +122,16 @@ class GroqLLM {
   }
 
   async streamChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
+    if (!this.model)
       throw new Error(
-        `GroqAI:streamChat: ${this.model} is not valid for chat completion!`
+        `LMStudio chat: ${this.model} is not valid or defined for chat completion!`
       );
 
-    const streamRequest = await this.openai.chat.completions.create({
+    const streamRequest = await this.lmstudio.chat.completions.create({
       model: this.model,
-      stream: true,
       temperature: Number(workspace?.openAiTemp ?? this.defaultTemp),
       n: 1,
+      stream: true,
       messages: await this.compressMessages(
         {
           systemPrompt: chatPrompt(workspace),
@@ -151,20 +145,16 @@ class GroqLLM {
   }
 
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
+    if (!this.model)
       throw new Error(
-        `GroqAI:chatCompletion: ${this.model} is not valid for chat completion!`
+        `LMStudio chat: ${this.model} is not valid or defined model for chat completion!`
       );
 
-    const result = await this.openai.chat.completions
-      .create({
-        model: this.model,
-        messages,
-        temperature,
-      })
-      .catch((e) => {
-        throw new Error(e.response.data.error.message);
-      });
+    const result = await this.lmstudio.chat.completions.create({
+      model: this.model,
+      messages,
+      temperature,
+    });
 
     if (!result.hasOwnProperty("choices") || result.choices.length === 0)
       return null;
@@ -172,12 +162,12 @@ class GroqLLM {
   }
 
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
+    if (!this.model)
       throw new Error(
-        `GroqAI:streamChatCompletion: ${this.model} is not valid for chat completion!`
+        `LMStudio chat: ${this.model} is not valid or defined model for chat completion!`
       );
 
-    const streamRequest = await this.openai.chat.completions.create({
+    const streamRequest = await this.lmstudio.chat.completions.create({
       model: this.model,
       stream: true,
       messages,
@@ -206,5 +196,5 @@ class GroqLLM {
 }
 
 module.exports = {
-  GroqLLM,
+  LMStudioLLM,
 };

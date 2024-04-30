@@ -1,28 +1,38 @@
 const { NativeEmbedder } = require("../../EmbeddingEngines/native");
+const { OpenAiEmbedder } = require("../../EmbeddingEngines/openAi");
 const { chatPrompt } = require("../../chats");
 const {
   handleDefaultStreamResponseV2,
 } = require("../../helpers/chat/responses");
 
-class GroqLLM {
-  constructor(embedder = null, modelPreference = null) {
+class HuggingFaceLLM {
+  constructor(embedder = null, _modelPreference = null) {
+    if (!process.env.HUGGING_FACE_LLM_ENDPOINT)
+      throw new Error("No HuggingFace Inference Endpoint was set.");
+    if (!process.env.HUGGING_FACE_LLM_API_KEY)
+      throw new Error("No HuggingFace Access Token was set.");
     const { OpenAI: OpenAIApi } = require("openai");
-    if (!process.env.GROQ_API_KEY) throw new Error("No Groq API key was set.");
 
     this.openai = new OpenAIApi({
-      baseURL: "https://api.groq.com/openai/v1",
-      apiKey: process.env.GROQ_API_KEY,
+      baseURL: `${process.env.HUGGING_FACE_LLM_ENDPOINT}/v1`,
+      apiKey: process.env.HUGGING_FACE_LLM_API_KEY,
     });
-    this.model =
-      modelPreference || process.env.GROQ_MODEL_PREF || "llama3-8b-8192";
+    // When using HF inference server - the model param is not required so
+    // we can stub it here. HF Endpoints can only run one model at a time.
+    // We set to 'tgi' so that endpoint for HF can accept message format
+    this.model = "tgi";
     this.limits = {
       history: this.promptWindowLimit() * 0.15,
       system: this.promptWindowLimit() * 0.15,
       user: this.promptWindowLimit() * 0.7,
     };
 
-    this.embedder = !embedder ? new NativeEmbedder() : embedder;
-    this.defaultTemp = 0.7;
+    if (!embedder)
+      console.warn(
+        "No embedding provider defined for HuggingFaceLLM - falling back to Native for embedding!"
+      );
+    this.embedder = !embedder ? new OpenAiEmbedder() : new NativeEmbedder();
+    this.defaultTemp = 0.2;
   }
 
   #appendContext(contextTexts = []) {
@@ -42,35 +52,14 @@ class GroqLLM {
   }
 
   promptWindowLimit() {
-    switch (this.model) {
-      case "mixtral-8x7b-32768":
-        return 32_768;
-      case "llama3-8b-8192":
-        return 8192;
-      case "llama3-70b-8192":
-        return 8192;
-      case "gemma-7b-it":
-        return 8192;
-      default:
-        return 8192;
-    }
+    const limit = process.env.HUGGING_FACE_LLM_TOKEN_LIMIT || 4096;
+    if (!limit || isNaN(Number(limit)))
+      throw new Error("No HuggingFace token context limit was set.");
+    return Number(limit);
   }
 
-  async isValidChatCompletionModel(modelName = "") {
-    const validModels = [
-      "mixtral-8x7b-32768",
-      "llama3-8b-8192",
-      "llama3-70b-8192",
-      "gemma-7b-it",
-    ];
-    const isPreset = validModels.some((model) => modelName === model);
-    if (isPreset) return true;
-
-    const model = await this.openai.models
-      .retrieve(modelName)
-      .then((modelObj) => modelObj)
-      .catch(() => null);
-    return !!model;
+  async isValidChatCompletionModel(_ = "") {
+    return true;
   }
 
   constructPrompt({
@@ -79,11 +68,21 @@ class GroqLLM {
     chatHistory = [],
     userPrompt = "",
   }) {
+    // System prompt it not enabled for HF model chats
     const prompt = {
-      role: "system",
+      role: "user",
       content: `${systemPrompt}${this.#appendContext(contextTexts)}`,
     };
-    return [prompt, ...chatHistory, { role: "user", content: userPrompt }];
+    const assistantResponse = {
+      role: "assistant",
+      content: "Okay, I will follow those instructions",
+    };
+    return [
+      prompt,
+      assistantResponse,
+      ...chatHistory,
+      { role: "user", content: userPrompt },
+    ];
   }
 
   async isSafe(_input = "") {
@@ -92,11 +91,6 @@ class GroqLLM {
   }
 
   async sendChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
-      throw new Error(
-        `Groq chat: ${this.model} is not valid for chat completion!`
-      );
-
     const textResponse = await this.openai.chat.completions
       .create({
         model: this.model,
@@ -113,14 +107,14 @@ class GroqLLM {
       })
       .then((result) => {
         if (!result.hasOwnProperty("choices"))
-          throw new Error("GroqAI chat: No results!");
+          throw new Error("HuggingFace chat: No results!");
         if (result.choices.length === 0)
-          throw new Error("GroqAI chat: No results length!");
+          throw new Error("HuggingFace chat: No results length!");
         return result.choices[0].message.content;
       })
       .catch((error) => {
         throw new Error(
-          `GroqAI::createChatCompletion failed with: ${error.message}`
+          `HuggingFace::createChatCompletion failed with: ${error.message}`
         );
       });
 
@@ -128,11 +122,6 @@ class GroqLLM {
   }
 
   async streamChat(chatHistory = [], prompt, workspace = {}, rawHistory = []) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
-      throw new Error(
-        `GroqAI:streamChat: ${this.model} is not valid for chat completion!`
-      );
-
     const streamRequest = await this.openai.chat.completions.create({
       model: this.model,
       stream: true,
@@ -151,20 +140,11 @@ class GroqLLM {
   }
 
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
-      throw new Error(
-        `GroqAI:chatCompletion: ${this.model} is not valid for chat completion!`
-      );
-
-    const result = await this.openai.chat.completions
-      .create({
-        model: this.model,
-        messages,
-        temperature,
-      })
-      .catch((e) => {
-        throw new Error(e.response.data.error.message);
-      });
+    const result = await this.openai.createChatCompletion({
+      model: this.model,
+      messages,
+      temperature,
+    });
 
     if (!result.hasOwnProperty("choices") || result.choices.length === 0)
       return null;
@@ -172,11 +152,6 @@ class GroqLLM {
   }
 
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
-    if (!(await this.isValidChatCompletionModel(this.model)))
-      throw new Error(
-        `GroqAI:streamChatCompletion: ${this.model} is not valid for chat completion!`
-      );
-
     const streamRequest = await this.openai.chat.completions.create({
       model: this.model,
       stream: true,
@@ -206,5 +181,5 @@ class GroqLLM {
 }
 
 module.exports = {
-  GroqLLM,
+  HuggingFaceLLM,
 };
