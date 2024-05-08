@@ -46,7 +46,7 @@ export default function PromptInput({
   };
 
   return (
-    <div className="w-full absolute left-0 bottom-[25px] z-10 flex justify-center items-center px-5">
+    <div className="w-full sticky bottom-0 z-10 flex justify-center items-center px-5 bg-white">
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-y-1 rounded-t-lg w-full items-center justify-center"
@@ -69,12 +69,15 @@ export default function PromptInput({
                 value={message}
                 className="cursor-text max-h-[100px] text-[14px] mx-2 py-2 w-full text-black bg-transparent placeholder:text-slate-800/60 resize-none active:outline-none focus:outline-none flex-grow"
                 placeholder={"Send a message"}
+                id="message-input"
               />
               <button
                 ref={formRef}
                 type="submit"
                 disabled={buttonDisabled}
                 className="inline-flex justify-center rounded-2xl cursor-pointer text-black group ml-4"
+                id="send-message-button"
+                aria-label="Send message"
               >
                 {buttonDisabled ? (
                   <CircleNotch className="w-4 h-4 animate-spin" />
