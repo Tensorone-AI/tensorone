@@ -24,7 +24,14 @@ function validSpaceUrl(spaceUrl = "") {
     "https\\://(:subdomain.):domain.:tld/wiki/spaces/(:spaceKey)/*"
   );
   const customMatch = customPattern.match(spaceUrl);
-  if (customMatch) {
+
+  // Custom "display" Confluence URL match
+  const customDisplayPattern = new UrlPattern(
+    "https\\://(:subdomain.):domain.:tld/display/(:spaceKey)/*"
+  );
+  const customDisplayMatch = customDisplayPattern.match(spaceUrl);
+
+  if (customMatch || customDisplayMatch) {
     customMatch.customDomain =
       (customMatch.subdomain ? `${customMatch.subdomain}.` : "") + //
       `${customMatch.domain}.${customMatch.tld}`;
@@ -101,6 +108,8 @@ async function loadConfluence({ pageUrl, username, accessToken }) {
     fs.mkdirSync(outFolderPath, { recursive: true });
 
   docs.forEach((doc) => {
+    if (!doc.pageContent) return;
+
     const data = {
       id: v4(),
       url: doc.metadata.url + ".page",
