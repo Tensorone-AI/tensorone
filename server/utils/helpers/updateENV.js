@@ -407,6 +407,10 @@ const KEY_MAPPING = {
     envKey: "AGENT_SERPLY_API_KEY",
     checks: [],
   },
+  AgentSearXNGApiUrl: {
+    envKey: "AGENT_SEARXNG_API_URL",
+    checks: [],
+  },
 
   // TTS/STT Integration ENVS
   TextToSpeechProvider: {
@@ -719,7 +723,7 @@ async function updateENV(newENVs = {}, force = false, userId = null) {
   }
 
   await logChangesToEventLog(newValues, userId);
-  if (process.env.NODE_ENV === "production") await dumpENV();
+  if (process.env.NODE_ENV === "production") dumpENV();
   return { newValues, error: error?.length > 0 ? error : false };
 }
 
@@ -745,7 +749,7 @@ async function logChangesToEventLog(newValues = {}, userId = null) {
   return;
 }
 
-async function dumpENV() {
+function dumpENV() {
   const fs = require("fs");
   const path = require("path");
 
