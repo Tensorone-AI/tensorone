@@ -1,6 +1,7 @@
 import { API_BASE, AUTH_TIMESTAMP, fullApiUrl } from "@/utils/constants";
 import { baseHeaders, safeJsonParse } from "@/utils/request";
 import DataConnector from "./dataConnector";
+import LiveDocumentSync from "./experimental/liveSync";
 
 const System = {
   cacheKeys: {
@@ -511,10 +512,23 @@ const System = {
         return false;
       });
   },
-  customModels: async function (provider, apiKey = null, basePath = null) {
+  customModels: async function (
+    provider,
+    apiKey = null,
+    basePath = null,
+    timeout = null
+  ) {
+    const controller = new AbortController();
+    if (!!timeout) {
+      setTimeout(() => {
+        controller.abort("Request timed out.");
+      }, timeout);
+    }
+
     return fetch(`${API_BASE}/system/custom-models`, {
       method: "POST",
       headers: baseHeaders(),
+      signal: controller.signal,
       body: JSON.stringify({
         provider,
         apiKey,
@@ -674,6 +688,9 @@ const System = {
         console.error(e);
         return false;
       });
+  },
+  experimentalFeatures: {
+    liveSync: LiveDocumentSync,
   },
 };
 

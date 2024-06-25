@@ -5,7 +5,7 @@ import { OLLAMA_COMMON_URLS } from "@/utils/constants";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
 import useProviderEndpointAutoDiscovery from "@/hooks/useProviderEndpointAutoDiscovery";
 
-export default function OllamaLLMOptions({ settings }) {
+export default function OllamaEmbeddingOptions({ settings }) {
   const {
     autoDetecting: loading,
     basePath,
@@ -15,44 +15,43 @@ export default function OllamaLLMOptions({ settings }) {
     handleAutoDetectClick,
   } = useProviderEndpointAutoDiscovery({
     provider: "ollama",
-    initialBasePath: settings?.OllamaLLMBasePath,
+    initialBasePath: settings?.EmbeddingBasePath,
     ENDPOINTS: OLLAMA_COMMON_URLS,
   });
 
-  const [maxTokens, setMaxTokens] = useState(
-    settings?.OllamaLLMTokenLimit || 4096
+  const [maxChunkLength, setMaxChunkLength] = useState(
+    settings?.EmbeddingModelMaxChunkLength || 8192
   );
 
-  const handleMaxTokensChange = (e) => {
-    setMaxTokens(Number(e.target.value));
+  const handleMaxChunkLengthChange = (e) => {
+    setMaxChunkLength(Number(e.target.value));
   };
 
   return (
     <div className="w-full flex flex-col gap-y-4">
       <div className="w-full flex items-start gap-4">
-        <OllamaLLMModelSelection
+        <OllamaEmbeddingModelSelection
           settings={settings}
           basePath={basePath.value}
         />
         <div className="flex flex-col w-60">
           <label className="text-white text-sm font-semibold block mb-2">
-            Max Tokens
+            Max Embedding Chunk Length
           </label>
           <input
             type="number"
-            name="OllamaLLMTokenLimit"
+            name="EmbeddingModelMaxChunkLength"
             className="bg-zinc-900 text-white placeholder:text-white/20 text-sm rounded-lg focus:border-white block w-full p-2.5"
-            placeholder="4096"
-            defaultChecked="4096"
+            placeholder="8192"
             min={1}
-            value={maxTokens}
-            onChange={handleMaxTokensChange}
+            value={maxChunkLength}
+            onChange={handleMaxChunkLengthChange}
             onScroll={(e) => e.target.blur()}
             required={true}
             autoComplete="off"
           />
           <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-            Maximum number of tokens for context and response.
+            Maximum length of text chunks for embedding.
           </p>
         </div>
       </div>
@@ -97,7 +96,7 @@ export default function OllamaLLMOptions({ settings }) {
             </div>
             <input
               type="url"
-              name="OllamaLLMBasePath"
+              name="EmbeddingBasePath"
               className="bg-zinc-900 text-white placeholder:text-white/20 text-sm rounded-lg focus:border-white block w-full p-2.5"
               placeholder="http://127.0.0.1:11434"
               value={basePathValue.value}
@@ -117,7 +116,7 @@ export default function OllamaLLMOptions({ settings }) {
   );
 }
 
-function OllamaLLMModelSelection({ settings, basePath = null }) {
+function OllamaEmbeddingModelSelection({ settings, basePath = null }) {
   const [customModels, setCustomModels] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -145,10 +144,10 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
     return (
       <div className="flex flex-col w-60">
         <label className="text-white text-sm font-semibold block mb-2">
-          Ollama Model
+          Ollama Embedding Model
         </label>
         <select
-          name="OllamaLLMModelPref"
+          name="EmbeddingModelPref"
           disabled={true}
           className="bg-zinc-900 border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
         >
@@ -159,7 +158,7 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
           </option>
         </select>
         <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-          Select the Ollama model you want to use. Models will load after
+          Select the Ollama model for embeddings. Models will load after
           entering a valid Ollama URL.
         </p>
       </div>
@@ -169,10 +168,10 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
   return (
     <div className="flex flex-col w-60">
       <label className="text-white text-sm font-semibold block mb-2">
-        Ollama Model
+        Ollama Embedding Model
       </label>
       <select
-        name="OllamaLLMModelPref"
+        name="EmbeddingModelPref"
         required={true}
         className="bg-zinc-900 border-gray-500 text-white text-sm rounded-lg block w-full p-2.5"
       >
@@ -183,7 +182,7 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
                 <option
                   key={model.id}
                   value={model.id}
-                  selected={settings.OllamaLLMModelPref === model.id}
+                  selected={settings.EmbeddingModelPref === model.id}
                 >
                   {model.id}
                 </option>
@@ -193,7 +192,7 @@ function OllamaLLMModelSelection({ settings, basePath = null }) {
         )}
       </select>
       <p className="text-xs leading-[18px] font-base text-white text-opacity-60 mt-2">
-        Choose the Ollama model you want to use for your conversations.
+        Choose the Ollama model you want to use for generating embeddings.
       </p>
     </div>
   );
