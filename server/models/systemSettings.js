@@ -15,7 +15,6 @@ function isNullOrNaN(value) {
 const SystemSettings = {
   protectedFields: ["multi_user_mode"],
   supportedFields: [
-    "users_can_delete_workspaces",
     "limit_user_messages",
     "message_limit",
     "logo_filename",
@@ -28,6 +27,9 @@ const SystemSettings = {
     "default_agent_skills",
     "agent_sql_connections",
     "custom_app_name",
+
+    // beta feature flags
+    "experimental_live_file_sync",
   ],
   validations: {
     footer_data: (updates) => {
@@ -76,6 +78,7 @@ const SystemSettings = {
             "serper-dot-dev",
             "bing-search",
             "serply-engine",
+            "searxng-engine",
           ].includes(update)
         )
           throw new Error("Invalid SERP provider.");
@@ -113,6 +116,12 @@ const SystemSettings = {
         return JSON.stringify(existingConnections ?? []);
       }
     },
+    experimental_live_file_sync: (update) => {
+      if (typeof update === "boolean")
+        return update === true ? "enabled" : "disabled";
+      if (!["enabled", "disabled"].includes(update)) return "disabled";
+      return String(update);
+    },
   },
   currentSettings: async function () {
     const { hasVectorCachedFiles } = require("../utils/files");
@@ -139,6 +148,8 @@ const SystemSettings = {
       EmbeddingModelPref: process.env.EMBEDDING_MODEL_PREF,
       EmbeddingModelMaxChunkLength:
         process.env.EMBEDDING_MODEL_MAX_CHUNK_LENGTH,
+      GenericOpenAiEmbeddingApiKey:
+        !!process.env.GENERIC_OPEN_AI_EMBEDDING_API_KEY,
 
       // --------------------------------------------------------
       // VectorDB Provider Selection Settings & Configs
@@ -176,10 +187,11 @@ const SystemSettings = {
       // Agent Settings & Configs
       // --------------------------------------------------------
       AgentGoogleSearchEngineId: process.env.AGENT_GSE_CTX || null,
-      AgentGoogleSearchEngineKey: process.env.AGENT_GSE_KEY || null,
-      AgentSerperApiKey: process.env.AGENT_SERPER_DEV_KEY || null,
-      AgentBingSearchApiKey: process.env.AGENT_BING_SEARCH_API_KEY || null,
-      AgentSerplyApiKey: process.env.AGENT_SERPLY_API_KEY || null,
+      AgentGoogleSearchEngineKey: !!process.env.AGENT_GSE_KEY || null,
+      AgentSerperApiKey: !!process.env.AGENT_SERPER_DEV_KEY || null,
+      AgentBingSearchApiKey: !!process.env.AGENT_BING_SEARCH_API_KEY || null,
+      AgentSerplyApiKey: !!process.env.AGENT_SERPLY_API_KEY || null,
+      AgentSearXNGApiUrl: process.env.AGENT_SEARXNG_API_URL || null,
     };
   },
 
@@ -286,16 +298,6 @@ const SystemSettings = {
     } catch (error) {
       console.error(error.message);
       return null;
-    }
-  },
-
-  canDeleteWorkspaces: async function () {
-    try {
-      const setting = await this.get({ label: "users_can_delete_workspaces" });
-      return setting?.value === "true";
-    } catch (error) {
-      console.error(error.message);
-      return false;
     }
   },
 
@@ -456,6 +458,13 @@ const SystemSettings = {
         return rest;
       });
     },
+  },
+  getFeatureFlags: async function () {
+    return {
+      experimental_live_file_sync:
+        (await SystemSettings.get({ label: "experimental_live_file_sync" }))
+          ?.value === "enabled",
+    };
   },
 };
 
