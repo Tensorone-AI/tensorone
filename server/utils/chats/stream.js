@@ -53,20 +53,6 @@ async function streamChatWithWorkspace(
     model: workspace?.chatModel,
   });
   const VectorDb = getVectorDbClass();
-  const { safe, reasons = [] } = await LLMConnector.isSafe(message);
-  if (!safe) {
-    writeResponseChunk(response, {
-      id: uuid,
-      type: "abort",
-      textResponse: null,
-      sources: [],
-      close: true,
-      error: `This message was moderated and will not be allowed. Violations for ${reasons.join(
-        ", "
-      )} found.`,
-    });
-    return;
-  }
 
   const messageLimit = workspace?.openAiHistory || 20;
   const hasVectorizedSpace = await VectorDb.hasNamespace(workspace.slug);
@@ -75,15 +61,28 @@ async function streamChatWithWorkspace(
   // User is trying to query-mode chat a workspace that has no data in it - so
   // we should exit early as no information can be found under these conditions.
   if ((!hasVectorizedSpace || embeddingsCount === 0) && chatMode === "query") {
+    const textResponse =
+      workspace?.queryRefusalResponse ??
+      "There is no relevant information in this workspace to answer your query.";
     writeResponseChunk(response, {
       id: uuid,
       type: "textResponse",
-      textResponse:
-        workspace?.queryRefusalResponse ??
-        "There is no relevant information in this workspace to answer your query.",
+      textResponse,
       sources: [],
       close: true,
       error: null,
+    });
+    await WorkspaceChats.new({
+      workspaceId: workspace.id,
+      prompt: message,
+      response: {
+        text: textResponse,
+        sources: [],
+        type: chatMode,
+      },
+      threadId: thread?.id || null,
+      include: false,
+      user,
     });
     return;
   }
@@ -100,7 +99,6 @@ async function streamChatWithWorkspace(
     workspace,
     thread,
     messageLimit,
-    chatMode,
   });
 
   // Look for pinned documents and see if the user decided to use this feature. We will also do a vector search
@@ -157,25 +155,50 @@ async function streamChatWithWorkspace(
     return;
   }
 
-  contextTexts = [...contextTexts, ...vectorSearchResults.contextTexts];
+  const { fillSourceWindow } = require("../helpers/chat");
+  const filledSources = fillSourceWindow({
+    nDocs: workspace?.topN || 4,
+    searchResults: vectorSearchResults.sources,
+    history: rawHistory,
+    filterIdentifiers: pinnedDocIdentifiers,
+  });
+
+  // Why does contextTexts get all the info, but sources only get current search?
+  // This is to give the ability of the LLM to "comprehend" a contextual response without
+  // populating the Citations under a response with documents the user "thinks" are irrelevant
+  // due to how we manage backfilling of the context to keep chats with the LLM more correct in responses.
+  // If a past citation was used to answer the question - that is visible in the history so it logically makes sense
+  // and does not appear to the user that a new response used information that is otherwise irrelevant for a given prompt.
+  // TLDR; reduces GitHub issues for "LLM citing document that has no answer in it" while keep answers highly accurate.
+  contextTexts = [...contextTexts, ...filledSources.contextTexts];
   sources = [...sources, ...vectorSearchResults.sources];
 
-  // If in query mode and no sources are found from the vector search and no pinned documents, do not
+  // If in query mode and no context chunks are found from search, backfill, or pins -  do not
   // let the LLM try to hallucinate a response or use general knowledge and exit early
-  if (
-    chatMode === "query" &&
-    sources.length === 0 &&
-    pinnedDocIdentifiers.length === 0
-  ) {
+  if (chatMode === "query" && contextTexts.length === 0) {
+    const textResponse =
+      workspace?.queryRefusalResponse ??
+      "There is no relevant information in this workspace to answer your query.";
     writeResponseChunk(response, {
       id: uuid,
       type: "textResponse",
-      textResponse:
-        workspace?.queryRefusalResponse ??
-        "There is no relevant information in this workspace to answer your query.",
+      textResponse,
       sources: [],
       close: true,
       error: null,
+    });
+
+    await WorkspaceChats.new({
+      workspaceId: workspace.id,
+      prompt: message,
+      response: {
+        text: textResponse,
+        sources: [],
+        type: chatMode,
+      },
+      threadId: thread?.id || null,
+      include: false,
+      user,
     });
     return;
   }
