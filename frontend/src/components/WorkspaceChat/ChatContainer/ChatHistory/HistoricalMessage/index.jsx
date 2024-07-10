@@ -9,6 +9,8 @@ import { AI_BACKGROUND_COLOR, USER_BACKGROUND_COLOR } from "@/utils/constants";
 import { v4 } from "uuid";
 import createDOMPurify from "dompurify";
 import { EditMessageForm, useEditMessage } from "./Actions/EditMessage";
+import { useWatchDeleteMessage } from "./Actions/DeleteMessage";
+import TTSMessage from "./Actions/TTSButton";
 
 const DOMPurify = createDOMPurify(window);
 const HistoricalMessage = ({
@@ -26,6 +28,10 @@ const HistoricalMessage = ({
   forkThread,
 }) => {
   const { isEditing } = useEditMessage({ chatId, role });
+  const { isDeleted, completeDelete, onEndAnimation } = useWatchDeleteMessage({
+    chatId,
+    role,
+  });
   const adjustTextArea = (event) => {
     const element = event.target;
     element.style.height = "auto";
@@ -58,16 +64,29 @@ const HistoricalMessage = ({
     );
   }
 
+  if (completeDelete) return null;
   return (
     <div
       key={uuid}
-      className={`flex justify-center items-end w-full group ${
+      onAnimationEnd={onEndAnimation}
+      className={`${
+        isDeleted ? "animate-remove" : ""
+      } flex justify-center items-end w-full group ${
         role === "user" ? USER_BACKGROUND_COLOR : AI_BACKGROUND_COLOR
       }`}
     >
       <div className={`py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col`}>
         <div className="flex gap-x-5">
-          <ProfileImage role={role} workspace={workspace} />
+          <div className="flex flex-col items-center">
+            <ProfileImage role={role} workspace={workspace} />
+            <div className="mt-1 -mb-10">
+              <TTSMessage
+                slug={workspace?.slug}
+                chatId={chatId}
+                message={message}
+              />
+            </div>
+          </div>
           {isEditing ? (
             <EditMessageForm
               role={role}
@@ -85,8 +104,7 @@ const HistoricalMessage = ({
             />
           )}
         </div>
-        <div className="flex gap-x-5">
-          <div className="relative w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden" />
+        <div className="flex gap-x-5 ml-14">
           <Actions
             message={message}
             feedbackScore={feedbackScore}
