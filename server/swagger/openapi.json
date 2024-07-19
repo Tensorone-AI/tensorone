@@ -165,6 +165,9 @@
               }
             }
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "401": {
             "description": "Instance is not in Multi-User mode. Method denied"
           },
@@ -710,7 +713,6 @@
                   "type": "object",
                   "example": {
                     "settings": {
-                      "users_can_delete_workspaces": true,
                       "limit_user_messages": false,
                       "message_limit": 10
                     }
@@ -792,7 +794,6 @@
           "content": {
             "application/json": {
               "example": {
-                "users_can_delete_workspaces": false,
                 "limit_user_messages": true,
                 "message_limit": 5
               }
