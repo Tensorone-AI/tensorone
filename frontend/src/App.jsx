@@ -57,6 +57,13 @@ const EmbedChats = lazy(() => import("@/pages/GeneralSettings/EmbedChats"));
 const PrivacyAndData = lazy(
   () => import("@/pages/GeneralSettings/PrivacyAndData")
 );
+const ExperimentalFeatures = lazy(
+  () => import("@/pages/Admin/ExperimentalFeatures")
+);
+const LiveDocumentSyncManage = lazy(
+  () => import("@/pages/Admin/ExperimentalFeatures/Features/LiveSync/manage")
+);
+const FineTuningWalkthrough = lazy(() => import("@/pages/FineTuning"));
 
 export default function App() {
   return (
@@ -143,6 +150,10 @@ export default function App() {
                   element={<ManagerRoute Component={GeneralAppearance} />}
                 />
                 <Route
+                  path="/settings/beta-features"
+                  element={<AdminRoute Component={ExperimentalFeatures} />}
+                />
+                <Route
                   path="/settings/api-keys"
                   element={<AdminRoute Component={GeneralApiKeys} />}
                 />
@@ -169,9 +180,21 @@ export default function App() {
                 {/* Onboarding Flow */}
                 <Route path="/onboarding" element={<OnboardingFlow />} />
                 <Route path="/onboarding/:step" element={<OnboardingFlow />} />
+
+                {/* Experimental feature pages  */}
+                {/* Live Document Sync feature */}
+                <Route
+                  path="/settings/beta-features/live-document-sync/manage"
+                  element={<AdminRoute Component={LiveDocumentSyncManage} />}
+                />
+
+                <Route
+                  path="/fine-tuning"
+                  element={<AdminRoute Component={FineTuningWalkthrough} />}
+                />
               </Routes>
+              <ToastContainer />
             </I18nextProvider>
-            <ToastContainer />
           </PfpProvider>
         </LogoProvider>
       </ContextWrapper>
