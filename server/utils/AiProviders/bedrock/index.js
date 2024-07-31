@@ -5,17 +5,20 @@ const {
 } = require("../../helpers/chat/responses");
 const { NativeEmbedder } = require("../../EmbeddingEngines/native");
 
-// Docs: https://github.com/jmorganca/ollama/blob/main/docs/api.md
-class OllamaAILLM {
+// Docs: https://js.langchain.com/v0.2/docs/integrations/chat/bedrock_converse
+class AWSBedrockLLM {
   constructor(embedder = null, modelPreference = null) {
-    if (!process.env.OLLAMA_BASE_PATH)
-      throw new Error("No Ollama Base Path was set.");
+    if (!process.env.AWS_BEDROCK_LLM_ACCESS_KEY_ID)
+      throw new Error("No AWS Bedrock LLM profile id was set.");
 
-    this.basePath = process.env.OLLAMA_BASE_PATH;
-    this.model = modelPreference || process.env.OLLAMA_MODEL_PREF;
-    this.keepAlive = process.env.OLLAMA_KEEP_ALIVE_TIMEOUT
-      ? Number(process.env.OLLAMA_KEEP_ALIVE_TIMEOUT)
-      : 300; // Default 5-minute timeout for Ollama model loading.
+    if (!process.env.AWS_BEDROCK_LLM_ACCESS_KEY)
+      throw new Error("No AWS Bedrock LLM access key was set.");
+
+    if (!process.env.AWS_BEDROCK_LLM_REGION)
+      throw new Error("No AWS Bedrock LLM region was set.");
+
+    this.model =
+      modelPreference || process.env.AWS_BEDROCK_LLM_MODEL_PREFERENCE;
     this.limits = {
       history: this.promptWindowLimit() * 0.15,
       system: this.promptWindowLimit() * 0.15,
@@ -26,13 +29,15 @@ class OllamaAILLM {
     this.defaultTemp = 0.7;
   }
 
-  #ollamaClient({ temperature = 0.07 }) {
-    const { ChatOllama } = require("@langchain/community/chat_models/ollama");
-    return new ChatOllama({
-      baseUrl: this.basePath,
-      model: this.model,
-      keepAlive: this.keepAlive,
-      useMLock: true,
+  #bedrockClient({ temperature = 0.7 }) {
+    const { ChatBedrockConverse } = require("@langchain/aws");
+    return new ChatBedrockConverse({
+      model: process.env.AWS_BEDROCK_LLM_MODEL_PREFERENCE,
+      region: process.env.AWS_BEDROCK_LLM_REGION,
+      credentials: {
+        accessKeyId: process.env.AWS_BEDROCK_LLM_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_BEDROCK_LLM_ACCESS_KEY,
+      },
       temperature,
     });
   }
@@ -80,9 +85,9 @@ class OllamaAILLM {
   // Ensure the user set a value for the token limit
   // and if undefined - assume 4096 window.
   promptWindowLimit() {
-    const limit = process.env.OLLAMA_MODEL_TOKEN_LIMIT || 4096;
+    const limit = process.env.AWS_BEDROCK_LLM_MODEL_TOKEN_LIMIT || 8191;
     if (!limit || isNaN(Number(limit)))
-      throw new Error("No Ollama token context limit was set.");
+      throw new Error("No valid token context limit was set.");
     return Number(limit);
   }
 
@@ -122,6 +127,16 @@ class OllamaAILLM {
     userPrompt = "",
     attachments = [],
   }) {
+    // AWS Mistral models do not support system prompts
+    if (this.model.startsWith("mistral"))
+      return [
+        ...chatHistory,
+        {
+          role: "user",
+          ...this.#generateContent({ userPrompt, attachments }),
+        },
+      ];
+
     const prompt = {
       role: "system",
       content: `${systemPrompt}${this.#appendContext(contextTexts)}`,
@@ -137,24 +152,24 @@ class OllamaAILLM {
   }
 
   async getChatCompletion(messages = null, { temperature = 0.7 }) {
-    const model = this.#ollamaClient({ temperature });
+    const model = this.#bedrockClient({ temperature });
     const textResponse = await model
       .pipe(new StringOutputParser())
       .invoke(this.#convertToLangchainPrototypes(messages))
       .catch((e) => {
         throw new Error(
-          `Ollama::getChatCompletion failed to communicate with Ollama. ${e.message}`
+          `AWSBedrock::getChatCompletion failed to communicate with Ollama. ${e.message}`
         );
       });
 
     if (!textResponse || !textResponse.length)
-      throw new Error(`Ollama::getChatCompletion text response was empty.`);
+      throw new Error(`AWSBedrock::getChatCompletion text response was empty.`);
 
     return textResponse;
   }
 
   async streamGetChatCompletion(messages = null, { temperature = 0.7 }) {
-    const model = this.#ollamaClient({ temperature });
+    const model = this.#bedrockClient({ temperature });
     const stream = await model
       .pipe(new StringOutputParser())
       .stream(this.#convertToLangchainPrototypes(messages));
@@ -212,7 +227,7 @@ class OllamaAILLM {
           type: "textResponseChunk",
           textResponse: "",
           close: true,
-          error: `Ollama:streaming - could not stream chat. ${
+          error: `AWSBedrock:streaming - could not stream chat. ${
             error?.cause ?? error.message
           }`,
         });
@@ -237,5 +252,5 @@ class OllamaAILLM {
 }
 
 module.exports = {
-  OllamaAILLM,
+  AWSBedrockLLM,
 };
