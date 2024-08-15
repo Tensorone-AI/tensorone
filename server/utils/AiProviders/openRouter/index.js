@@ -117,6 +117,17 @@ class OpenRouterLLM {
     return "streamGetChatCompletion" in this;
   }
 
+  static promptWindowLimit(modelName) {
+    const cacheModelPath = path.resolve(cacheFolder, "models.json");
+    const availableModels = fs.existsSync(cacheModelPath)
+      ? safeJsonParse(
+          fs.readFileSync(cacheModelPath, { encoding: "utf-8" }),
+          {}
+        )
+      : {};
+    return availableModels[modelName]?.maxLength || 4096;
+  }
+
   promptWindowLimit() {
     const availableModels = this.models();
     return availableModels[this.model]?.maxLength || 4096;
@@ -254,35 +265,48 @@ class OpenRouterLLM {
         }
       }, 500);
 
-      for await (const chunk of stream) {
-        const message = chunk?.choices?.[0];
-        const token = message?.delta?.content;
-        lastChunkTime = Number(new Date());
+      try {
+        for await (const chunk of stream) {
+          const message = chunk?.choices?.[0];
+          const token = message?.delta?.content;
+          lastChunkTime = Number(new Date());
 
-        if (token) {
-          fullText += token;
-          writeResponseChunk(response, {
-            uuid,
-            sources: [],
-            type: "textResponseChunk",
-            textResponse: token,
-            close: false,
-            error: false,
-          });
-        }
+          if (token) {
+            fullText += token;
+            writeResponseChunk(response, {
+              uuid,
+              sources: [],
+              type: "textResponseChunk",
+              textResponse: token,
+              close: false,
+              error: false,
+            });
+          }
 
-        if (message.finish_reason !== null) {
-          writeResponseChunk(response, {
-            uuid,
-            sources,
-            type: "textResponseChunk",
-            textResponse: "",
-            close: true,
-            error: false,
-          });
-          response.removeListener("close", handleAbort);
-          resolve(fullText);
+          if (message.finish_reason !== null) {
+            writeResponseChunk(response, {
+              uuid,
+              sources,
+              type: "textResponseChunk",
+              textResponse: "",
+              close: true,
+              error: false,
+            });
+            response.removeListener("close", handleAbort);
+            resolve(fullText);
+          }
         }
+      } catch (e) {
+        writeResponseChunk(response, {
+          uuid,
+          sources,
+          type: "abort",
+          textResponse: null,
+          close: true,
+          error: e.message,
+        });
+        response.removeListener("close", handleAbort);
+        resolve(fullText);
       }
     });
   }
