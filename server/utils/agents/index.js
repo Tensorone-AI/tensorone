@@ -42,6 +42,7 @@ class AgentHandler {
             workspaceId: this.invocation.workspace_id,
             user_id: this.invocation.user_id || null,
             thread_id: this.invocation.thread_id || null,
+            api_session_id: null,
             include: true,
           },
           limit,
@@ -143,6 +144,17 @@ class AgentHandler {
             "TextWebGenUI API base path must be provided to use agents."
           );
         break;
+      case "bedrock":
+        if (
+          !process.env.AWS_BEDROCK_LLM_ACCESS_KEY_ID ||
+          !process.env.AWS_BEDROCK_LLM_ACCESS_KEY ||
+          !process.env.AWS_BEDROCK_LLM_REGION ||
+          !process.env.AWS_BEDROCK_LLM_MODEL_PREFERENCE
+        )
+          throw new Error(
+            "AWS Bedrock Access Keys, model and region must be provided to use agents."
+          );
+        break;
 
       default:
         throw new Error(
@@ -183,6 +195,8 @@ class AgentHandler {
         return "sonar-small-online";
       case "textgenwebui":
         return null;
+      case "bedrock":
+        return null;
       default:
         return "unknown";
     }
@@ -210,7 +224,7 @@ class AgentHandler {
   }
 
   #providerSetupAndCheck() {
-    this.provider = this.invocation.workspace.agentProvider || "openai";
+    this.provider = this.invocation.workspace.agentProvider;
     this.model = this.#fetchModel();
     this.log(`Start ${this.#invocationUUID}::${this.provider}:${this.model}`);
     this.#checkSetup();
