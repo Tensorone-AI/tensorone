@@ -14,23 +14,31 @@ const TRANSLATIONS = {
   // Setting Sidebar menu items.
   settings: {
     title: "Instance Settings",
-    system: "System Preferences",
-    invites: "Invitation",
+    system: "General Settings",
+    invites: "Invites",
     users: "Users",
     workspaces: "Workspaces",
-    "workspace-chats": "Workspace Chat",
-    appearance: "Appearance",
-    "api-keys": "API Keys",
-    llm: "LLM Preference",
-    transcription: "Transcription Model",
-    embedder: "Embedding Preferences",
+    "workspace-chats": "Workspace Chats",
+    customization: "Customization",
+    "api-keys": "Developer API",
+    llm: "LLM",
+    transcription: "Transcription",
+    embedder: "Embedder",
     "text-splitting": "Text Splitter & Chunking",
+    "voice-speech": "Voice & Speech",
     "vector-database": "Vector Database",
-    embeds: "Chat Embed Widgets",
+    embeds: "Chat Embed",
     "embed-chats": "Chat Embed History",
     security: "Security",
     "event-logs": "Event Logs",
     privacy: "Privacy & Data",
+    "ai-providers": "AI Providers",
+    "agent-skills": "Agent Skills",
+    admin: "Admin",
+    tools: "Tools",
+    "experimental-features": "Experimental Features",
+    contact: "Contact Support",
+    "browser-extension": "Browser Extension",
   },
 
   // Page Definitions
@@ -48,6 +56,41 @@ const TRANSLATIONS = {
       start: "Sign in to your",
       end: "account.",
     },
+    "password-reset": {
+      title: "Password Reset",
+      description:
+        "Provide the necessary information below to reset your password.",
+      "recovery-codes": "Recovery Codes",
+      "recovery-code": "Recovery Code {{index}}",
+      "back-to-login": "Back to Login",
+    },
+  },
+
+  welcomeMessage: {
+    part1:
+      "Welcome to AnythingLLM, AnythingLLM is an open-source AI tool by Mintplex Labs that turns anything into a trained chatbot you can query and chat with. AnythingLLM is a BYOK (bring-your-own-keys) software so there is no subscription, fee, or charges for this software outside of the services you want to use with it.",
+    part2:
+      "AnythingLLM is the easiest way to put powerful AI products like OpenAi, GPT-4, LangChain, PineconeDB, ChromaDB, and other services together in a neat package with no fuss to increase your productivity by 100x.",
+    part3:
+      "AnythingLLM can run totally locally on your machine with little overhead you wont even notice it's there! No GPU needed. Cloud and on-premises installation is available as well.\nThe AI tooling ecosystem gets more powerful everyday. AnythingLLM makes it easy to use.",
+    githubIssue: "Create an issue on Github",
+    user1: "How do I get started?!",
+    part4:
+      "It's simple. All collections are organized into buckets we call \"Workspaces\". Workspaces are buckets of files, documents, images, PDFs, and other files which will be transformed into something LLM's can understand and use in conversation.\n\nYou can add and remove files at anytime.",
+    createWorkspace: "Create your first workspace",
+    user2:
+      "Is this like an AI dropbox or something? What about chatting? It is a chatbot isn't it?",
+    part5:
+      "AnythingLLM is more than a smarter Dropbox.\n\nAnythingLLM offers two ways of talking with your data:\n\n<i>Query:</i> Your chats will return data or inferences found with the documents in your workspace it has access to. Adding more documents to the Workspace make it smarter! \n\n<i>Conversational:</i> Your documents + your on-going chat history both contribute to the LLM knowledge at the same time. Great for appending real-time text-based info or corrections and misunderstandings the LLM might have. \n\nYou can toggle between either mode \n<i>in the middle of chatting!</i>",
+    user3: "Wow, this sounds amazing, let me try it out already!",
+    part6: "Have Fun!",
+    starOnGithub: "Star on GitHub",
+    contact: "Contact Mintplex Labs",
+  },
+
+  "new-workspace": {
+    title: "New Workspace",
+    placeholder: "My Workspace",
   },
 
   // Workspace Settings menu items
@@ -387,6 +430,7 @@ const TRANSLATIONS = {
 
   "embed-chats": {
     title: "Embed Chats",
+    export: "Export",
     description:
       "These are all the recorded chats and messages from any embed that you have published.",
     table: {

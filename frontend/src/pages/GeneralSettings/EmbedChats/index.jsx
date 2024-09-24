@@ -1,16 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import useQuery from "@/hooks/useQuery";
 import ChatRow from "./ChatRow";
-import showToast from "@/utils/toast";
-import System from "@/models/system";
-import { CaretDown, Download, Sparkle, Trash } from "@phosphor-icons/react";
-import { saveAs } from "file-saver";
+import Embed from "@/models/embed";
 import { useTranslation } from "react-i18next";
-import paths from "@/utils/paths";
+import { CaretDown, Download } from "@phosphor-icons/react";
+import showToast from "@/utils/toast";
+import { saveAs } from "file-saver";
+import System from "@/models/system";
 
 const exportOptions = {
   csv: {
@@ -18,7 +18,7 @@ const exportOptions = {
     mimeType: "text/csv",
     fileExtension: "csv",
     filenameFunc: () => {
-      return `anythingllm-chats-${new Date().toLocaleDateString()}`;
+      return `anythingllm-embed-chats-${new Date().toLocaleDateString()}`;
     },
   },
   json: {
@@ -26,7 +26,7 @@ const exportOptions = {
     mimeType: "application/json",
     fileExtension: "json",
     filenameFunc: () => {
-      return `anythingllm-chats-${new Date().toLocaleDateString()}`;
+      return `anythingllm-embed-chats-${new Date().toLocaleDateString()}`;
     },
   },
   jsonl: {
@@ -34,7 +34,7 @@ const exportOptions = {
     mimeType: "application/jsonl",
     fileExtension: "jsonl",
     filenameFunc: () => {
-      return `anythingllm-chats-${new Date().toLocaleDateString()}-lines`;
+      return `anythingllm-embed-chats-${new Date().toLocaleDateString()}-lines`;
     },
   },
   jsonAlpaca: {
@@ -42,45 +42,28 @@ const exportOptions = {
     mimeType: "application/json",
     fileExtension: "json",
     filenameFunc: () => {
-      return `anythingllm-chats-${new Date().toLocaleDateString()}-alpaca`;
+      return `anythingllm-embed-chats-${new Date().toLocaleDateString()}-alpaca`;
     },
   },
 };
 
-export default function WorkspaceChats() {
+export default function EmbedChats() {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef();
   const openMenuButton = useRef();
-  const query = useQuery();
-  const [loading, setLoading] = useState(true);
-  const [chats, setChats] = useState([]);
-  const [offset, setOffset] = useState(Number(query.get("offset") || 0));
-  const [canNext, setCanNext] = useState(false);
   const { t } = useTranslation();
 
   const handleDumpChats = async (exportType) => {
-    const chats = await System.exportChats(exportType, "workspace");
+    const chats = await System.exportChats(exportType, "embed");
     if (!!chats) {
       const { name, mimeType, fileExtension, filenameFunc } =
         exportOptions[exportType];
       const blob = new Blob([chats], { type: mimeType });
       saveAs(blob, `${filenameFunc()}.${fileExtension}`);
-      showToast(`Chats exported successfully as ${name}.`, "success");
+      showToast(`Embed chats exported successfully as ${name}.`, "success");
     } else {
-      showToast("Failed to export chats.", "error");
+      showToast("Failed to export embed chats.", "error");
     }
-  };
-
-  const handleClearAllChats = async () => {
-    if (
-      !window.confirm(
-        `Are you sure you want to clear all chats?\n\nThis action is irreversible.`
-      )
-    )
-      return false;
-    await System.deleteChat(-1);
-    setChats([]);
-    showToast("Cleared all chats.", "success");
   };
 
   const toggleMenu = () => {
@@ -104,16 +87,6 @@ export default function WorkspaceChats() {
     };
   }, []);
 
-  useEffect(() => {
-    async function fetchChats() {
-      const { chats: _chats, hasPages = false } = await System.chats(offset);
-      setChats(_chats);
-      setCanNext(hasPages);
-      setLoading(false);
-    }
-    fetchChats();
-  }, [offset]);
-
   return (
     <div className="w-screen h-screen overflow-hidden bg-sidebar flex">
       <Sidebar />
@@ -121,11 +94,11 @@ export default function WorkspaceChats() {
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
         className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-main-gradient w-full h-full overflow-y-scroll"
       >
-        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
+        <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[86px] md:py-6 py-16">
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
             <div className="flex gap-x-4 items-center">
               <p className="text-lg leading-6 font-bold text-white">
-                {t("recorded.title")}
+                {t("embed-chats.title")}
               </p>
               <div className="relative">
                 <button
@@ -134,7 +107,7 @@ export default function WorkspaceChats() {
                   className="flex items-center gap-x-2 px-4 py-1 rounded-lg bg-primary-button hover:text-white text-xs font-semibold hover:bg-secondary shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
                 >
                   <Download size={18} weight="bold" />
-                  {t("recorded.export")}
+                  {t("embed-chats.export")}
                   <CaretDown size={18} weight="bold" />
                 </button>
                 <div
@@ -159,53 +132,26 @@ export default function WorkspaceChats() {
                   </div>
                 </div>
               </div>
-              {chats.length > 0 && (
-                <>
-                  <button
-                    onClick={handleClearAllChats}
-                    className="flex items-center gap-x-2 px-4 py-1 border hover:border-transparent border-white/40 text-white/40 rounded-lg bg-transparent hover:text-white text-xs font-semibold hover:bg-red-500 shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                  >
-                    <Trash size={18} weight="bold" />
-                    Clear Chats
-                  </button>
-                  <a
-                    href={paths.orderFineTune()}
-                    className="flex items-center gap-x-2 px-4 py-1 border hover:border-transparent border-yellow-300 text-yellow-300/80 rounded-lg bg-transparent hover:text-white text-xs font-semibold hover:bg-yellow-300/75 shadow-[0_4px_14px_rgba(0,0,0,0.25)] h-[34px] w-fit"
-                  >
-                    <Sparkle size={18} weight="bold" />
-                    Order Fine-Tune Model
-                  </a>
-                </>
-              )}
             </div>
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-              {t("recorded.description")}
+              {t("embed-chats.description")}
             </p>
           </div>
-          <ChatsContainer
-            loading={loading}
-            chats={chats}
-            setChats={setChats}
-            offset={offset}
-            setOffset={setOffset}
-            canNext={canNext}
-            t={t}
-          />
+          <ChatsContainer />
         </div>
       </div>
     </div>
   );
 }
 
-function ChatsContainer({
-  loading,
-  chats,
-  setChats,
-  offset,
-  setOffset,
-  canNext,
-  t,
-}) {
+function ChatsContainer() {
+  const query = useQuery();
+  const [loading, setLoading] = useState(true);
+  const [chats, setChats] = useState([]);
+  const [offset, setOffset] = useState(Number(query.get("offset") || 0));
+  const [canNext, setCanNext] = useState(false);
+  const { t } = useTranslation();
+
   const handlePrevious = () => {
     setOffset(Math.max(offset - 1, 0));
   };
@@ -213,10 +159,19 @@ function ChatsContainer({
     setOffset(offset + 1);
   };
 
-  const handleDeleteChat = async (chatId) => {
-    await System.deleteChat(chatId);
+  const handleDeleteChat = (chatId) => {
     setChats((prevChats) => prevChats.filter((chat) => chat.id !== chatId));
   };
+
+  useEffect(() => {
+    async function fetchChats() {
+      const { chats: _chats, hasPages = false } = await Embed.chats(offset);
+      setChats(_chats);
+      setCanNext(hasPages);
+      setLoading(false);
+    }
+    fetchChats();
+  }, [offset]);
 
   if (loading) {
     return (
@@ -234,26 +189,23 @@ function ChatsContainer({
 
   return (
     <>
-      <table className="w-full text-sm text-left rounded-lg mt-6">
-        <thead className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white border-b border-opacity-60">
+      <table className="w-full text-sm text-left rounded-lg mt-5">
+        <thead className="text-white text-opacity-80 text-sm font-bold uppercase border-white border-b border-opacity-60">
           <tr>
             <th scope="col" className="px-6 py-3 rounded-tl-lg">
-              {t("recorded.table.id")}
+              {t("embed-chats.table.embed")}
             </th>
             <th scope="col" className="px-6 py-3">
-              {t("recorded.table.by")}
+              {t("embed-chats.table.sender")}
             </th>
             <th scope="col" className="px-6 py-3">
-              {t("recorded.table.workspace")}
+              {t("embed-chats.table.message")}
             </th>
             <th scope="col" className="px-6 py-3">
-              {t("recorded.table.prompt")}
+              {t("embed-chats.table.response")}
             </th>
             <th scope="col" className="px-6 py-3">
-              {t("recorded.table.response")}
-            </th>
-            <th scope="col" className="px-6 py-3">
-              {t("recorded.table.at")}
+              {t("embed-chats.table.at")}
             </th>
             <th scope="col" className="px-6 py-3 rounded-tr-lg">
               {" "}
@@ -267,21 +219,21 @@ function ChatsContainer({
             ))}
         </tbody>
       </table>
-      <div className="flex w-full justify-between items-center mt-6">
+      <div className="flex w-full justify-between items-center">
         <button
           onClick={handlePrevious}
           className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
           disabled={offset === 0}
         >
           {" "}
-          Previous Page
+          {t("common.previous")}
         </button>
         <button
           onClick={handleNext}
           className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
           disabled={!canNext}
         >
-          Next Page
+          {t("common.next")}
         </button>
       </div>
     </>
