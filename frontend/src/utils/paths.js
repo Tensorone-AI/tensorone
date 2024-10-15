@@ -80,9 +80,6 @@ export default {
     return `/fine-tuning`;
   },
   settings: {
-    system: () => {
-      return `/settings/system-preferences`;
-    },
     users: () => {
       return `/settings/users`;
     },
@@ -137,6 +134,9 @@ export default {
     },
     embedChats: () => {
       return `/settings/embed-chats`;
+    },
+    browserExtension: () => {
+      return `/settings/browser-extension`;
     },
     experimental: () => {
       return `/settings/beta-features`;

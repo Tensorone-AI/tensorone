@@ -22,7 +22,6 @@ const WorkspaceChat = lazy(() => import("@/pages/WorkspaceChat"));
 const AdminUsers = lazy(() => import("@/pages/Admin/Users"));
 const AdminInvites = lazy(() => import("@/pages/Admin/Invitations"));
 const AdminWorkspaces = lazy(() => import("@/pages/Admin/Workspaces"));
-const AdminSystem = lazy(() => import("@/pages/Admin/System"));
 const AdminLogs = lazy(() => import("@/pages/Admin/Logging"));
 const AdminAgents = lazy(() => import("@/pages/Admin/Agents"));
 const GeneralChats = lazy(() => import("@/pages/GeneralSettings/Chats"));
@@ -49,6 +48,9 @@ const GeneralVectorDatabase = lazy(
   () => import("@/pages/GeneralSettings/VectorDatabase")
 );
 const GeneralSecurity = lazy(() => import("@/pages/GeneralSettings/Security"));
+const GeneralBrowserExtension = lazy(
+  () => import("@/pages/GeneralSettings/BrowserExtensionApiKey")
+);
 const WorkspaceSettings = lazy(() => import("@/pages/WorkspaceSettings"));
 const EmbedConfigSetup = lazy(
   () => import("@/pages/GeneralSettings/EmbedConfigs")
@@ -158,12 +160,12 @@ export default function App() {
                   element={<AdminRoute Component={GeneralApiKeys} />}
                 />
                 <Route
-                  path="/settings/workspace-chats"
-                  element={<ManagerRoute Component={GeneralChats} />}
+                  path="/settings/browser-extension"
+                  element={<ManagerRoute Component={GeneralBrowserExtension} />}
                 />
                 <Route
-                  path="/settings/system-preferences"
-                  element={<ManagerRoute Component={AdminSystem} />}
+                  path="/settings/workspace-chats"
+                  element={<ManagerRoute Component={GeneralChats} />}
                 />
                 <Route
                   path="/settings/invites"
