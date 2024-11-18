@@ -7,6 +7,7 @@ import * as Skeleton from "react-loading-skeleton";
 import LogRow from "./LogRow";
 import showToast from "@/utils/toast";
 import CTAButton from "@/components/lib/CTAButton";
+import { useTranslation } from "react-i18next";
 
 export default function AdminLogs() {
   const query = useQuery();
@@ -14,6 +15,7 @@ export default function AdminLogs() {
   const [logs, setLogs] = useState([]);
   const [offset, setOffset] = useState(Number(query.get("offset") || 0));
   const [canNext, setCanNext] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     async function fetchLogs() {
@@ -52,40 +54,41 @@ export default function AdminLogs() {
   };
 
   return (
-    <div className="w-screen h-screen overflow-hidden bg-sidebar flex">
+    <div className="w-screen h-screen overflow-hidden bg-theme-bg-container flex">
       <Sidebar />
       <div
         style={{ height: isMobile ? "100%" : "calc(100% - 32px)" }}
-        className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-main-gradient w-full h-full overflow-y-scroll"
+        className="relative md:ml-[2px] md:mr-[16px] md:my-[16px] md:rounded-[16px] bg-theme-bg-secondary w-full h-full overflow-y-scroll p-4 md:p-0"
       >
         <div className="flex flex-col w-full px-1 md:pl-6 md:pr-[50px] md:py-6 py-16">
-          <div className="w-full flex flex-col gap-y-1 pb-6 border-white border-b-2 border-opacity-10">
+          <div className="w-full flex flex-col gap-y-1 pb-6 border-white/10 border-b-2">
             <div className="flex gap-x-4 items-center">
-              <p className="text-lg leading-6 font-bold text-white">
-                Event Logs
+              <p className="text-lg leading-6 font-bold text-theme-text-primary">
+                {t("event.title")}
               </p>
             </div>
-            <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-              View all actions and events happening on this instance for
-              monitoring.
+            <p className="text-xs leading-[18px] font-base text-theme-text-secondary mt-2">
+              {t("event.description")}
             </p>
           </div>
           <div className="w-full justify-end flex">
             <CTAButton
               onClick={handleResetLogs}
-              className="mt-3 mr-0 -mb-14 z-10"
+              className="mt-3 mr-0 mb-4 md:-mb-14 z-10"
             >
-              Clear Event Logs
+              {t("event.clear")}
             </CTAButton>
           </div>
-          <LogsContainer
-            loading={loading}
-            logs={logs}
-            offset={offset}
-            canNext={canNext}
-            handleNext={handleNext}
-            handlePrevious={handlePrevious}
-          />
+          <div className="overflow-x-auto mt-6">
+            <LogsContainer
+              loading={loading}
+              logs={logs}
+              offset={offset}
+              canNext={canNext}
+              handleNext={handleNext}
+              handlePrevious={handlePrevious}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -100,15 +103,16 @@ function LogsContainer({
   handleNext,
   handlePrevious,
 }) {
+  const { t } = useTranslation();
   if (loading) {
     return (
       <Skeleton.default
         height="80vh"
         width="100%"
-        highlightColor="#3D4147"
-        baseColor="#2C2F35"
+        highlightColor="var(--theme-bg-primary)"
+        baseColor="var(--theme-bg-secondary)"
         count={1}
-        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm mt-6"
+        className="w-full p-4 rounded-b-2xl rounded-tr-2xl rounded-tl-sm"
         containerClassName="flex w-full"
       />
     );
@@ -116,17 +120,17 @@ function LogsContainer({
 
   return (
     <>
-      <table className="w-full text-sm text-left rounded-lg mt-6">
-        <thead className="text-white text-opacity-80 text-xs leading-[18px] font-bold uppercase border-white border-b border-opacity-60">
+      <table className="w-full text-sm text-left rounded-lg min-w-[640px]">
+        <thead className="text-theme-text-secondary text-xs leading-[18px] font-bold uppercase border-white/10 border-b">
           <tr>
             <th scope="col" className="px-6 py-3 rounded-tl-lg">
-              Event Type
+              {t("event.table.type")}
             </th>
             <th scope="col" className="px-6 py-3">
-              User
+              {t("event.table.user")}
             </th>
             <th scope="col" className="px-6 py-3">
-              Occurred At
+              {t("event.table.occurred")}
             </th>
             <th scope="col" className="px-6 py-3 rounded-tr-lg">
               {" "}
@@ -140,17 +144,17 @@ function LogsContainer({
       <div className="flex w-full justify-between items-center mt-6">
         <button
           onClick={handlePrevious}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
+          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 light:text-theme-text-secondary light:border-theme-sidebar-border text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
           disabled={offset === 0}
         >
-          Previous Page
+          {t("common.previous")}
         </button>
         <button
           onClick={handleNext}
-          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
+          className="px-4 py-2 rounded-lg border border-slate-200 text-slate-200 light:text-theme-text-secondary light:border-theme-sidebar-border text-sm items-center flex gap-x-2 hover:bg-slate-200 hover:text-slate-800 disabled:invisible"
           disabled={!canNext}
         >
-          Next Page
+          {t("common.next")}
         </button>
       </div>
     </>
