@@ -13,6 +13,7 @@ import CohereLogo from "@/media/llmprovider/cohere.png";
 import VoyageAiLogo from "@/media/embeddingprovider/voyageai.png";
 import LiteLLMLogo from "@/media/llmprovider/litellm.png";
 import GenericOpenAiLogo from "@/media/llmprovider/generic-openai.png";
+import MistralAiLogo from "@/media/llmprovider/mistral.jpeg";
 
 import PreLoader from "@/components/Preloader";
 import ChangeWarningModal from "@/components/ChangeWarning";
@@ -33,6 +34,7 @@ import { useModal } from "@/hooks/useModal";
 import ModalWrapper from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
 import { useTranslation } from "react-i18next";
+import MistralAiOptions from "@/components/EmbeddingSelection/MistralAiOptions";
 
 const EMBEDDERS = [
   {
@@ -99,6 +101,13 @@ const EMBEDDERS = [
     logo: LiteLLMLogo,
     options: (settings) => <LiteLLMOptions settings={settings} />,
     description: "Run powerful embedding models from LiteLLM.",
+  },
+  {
+    name: "Mistral AI",
+    value: "mistral",
+    logo: MistralAiLogo,
+    options: (settings) => <MistralAiOptions settings={settings} />,
+    description: "Run powerful embedding models from Mistral AI.",
   },
   {
     name: "Generic OpenAI",
@@ -279,7 +288,7 @@ export default function GeneralEmbeddingPreference() {
                           name="embedder-search"
                           autoComplete="off"
                           placeholder="Search all embedding providers"
-                          className="-ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
+                          className="border-none -ml-4 my-2 bg-transparent z-20 pl-12 h-[38px] w-full px-4 py-1 text-sm outline-none text-theme-text-primary placeholder:text-theme-text-primary placeholder:font-medium"
                           onChange={(e) => setSearchQuery(e.target.value)}
                           ref={searchInputRef}
                           onKeyDown={(e) => {
