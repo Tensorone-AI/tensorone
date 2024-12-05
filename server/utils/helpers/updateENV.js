@@ -267,6 +267,10 @@ const KEY_MAPPING = {
     envKey: "GENERIC_OPEN_AI_EMBEDDING_API_KEY",
     checks: [],
   },
+  GenericOpenAiEmbeddingMaxConcurrentChunks: {
+    envKey: "GENERIC_OPEN_AI_EMBEDDING_MAX_CONCURRENT_CHUNKS",
+    checks: [nonZero],
+  },
 
   // Vector Database Selection Settings
   VectorDB: {
@@ -574,6 +578,29 @@ const KEY_MAPPING = {
     envKey: "XAI_LLM_MODEL_PREF",
     checks: [isNotEmpty],
   },
+
+  // Nvidia NIM Options
+  NvidiaNimLLMBasePath: {
+    envKey: "NVIDIA_NIM_LLM_BASE_PATH",
+    checks: [isValidURL],
+    postUpdate: [
+      (_, __, nextValue) => {
+        const { parseNvidiaNimBasePath } = require("../AiProviders/nvidiaNim");
+        process.env.NVIDIA_NIM_LLM_BASE_PATH =
+          parseNvidiaNimBasePath(nextValue);
+      },
+    ],
+  },
+  NvidiaNimLLMModelPref: {
+    envKey: "NVIDIA_NIM_LLM_MODEL_PREF",
+    checks: [],
+    postUpdate: [
+      async (_, __, nextValue) => {
+        const { NvidiaNimLLM } = require("../AiProviders/nvidiaNim");
+        await NvidiaNimLLM.setModelTokenLimit(nextValue);
+      },
+    ],
+  },
 };
 
 function isNotEmpty(input = "") {
@@ -680,6 +707,7 @@ function supportedLLM(input = "") {
     "deepseek",
     "apipie",
     "xai",
+    "nvidia-nim",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid LLM provider.`;
 }
@@ -753,6 +781,7 @@ function supportedEmbeddingModel(input = "") {
     "voyageai",
     "litellm",
     "generic-openai",
+    "mistral",
   ];
   return supported.includes(input)
     ? null
@@ -934,6 +963,8 @@ function dumpENV() {
     "DISABLE_VIEW_CHAT_HISTORY",
     // Simple SSO
     "SIMPLE_SSO_ENABLED",
+    // Community Hub
+    "COMMUNITY_HUB_BUNDLE_DOWNLOADS_ENABLED",
   ];
 
   // Simple sanitization of each value to prevent ENV injection via newline or quote escaping.

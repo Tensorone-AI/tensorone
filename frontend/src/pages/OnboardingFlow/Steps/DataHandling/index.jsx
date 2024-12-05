@@ -9,6 +9,7 @@ import GeminiLogo from "@/media/llmprovider/gemini.png";
 import OllamaLogo from "@/media/llmprovider/ollama.png";
 import TogetherAILogo from "@/media/llmprovider/togetherai.png";
 import FireworksAILogo from "@/media/llmprovider/fireworksai.jpeg";
+import NvidiaNimLogo from "@/media/llmprovider/nvidia-nim.png";
 import LMStudioLogo from "@/media/llmprovider/lmstudio.png";
 import LocalAiLogo from "@/media/llmprovider/localai.png";
 import MistralLogo from "@/media/llmprovider/mistral.jpeg";
@@ -75,6 +76,13 @@ export const LLM_SELECTION_PRIVACY = {
       "Your prompts and document text used in response creation are visible to Google",
     ],
     logo: GeminiLogo,
+  },
+  "nvidia-nim": {
+    name: "Nvidia NIM",
+    description: [
+      "Your model and chats are only accessible on the machine running the Nvidia NIM service",
+    ],
+    logo: NvidiaNimLogo,
   },
   lmstudio: {
     name: "LMStudio",
@@ -348,6 +356,13 @@ export const EMBEDDING_ENGINE_PRIVACY = {
       "Data sent to Voyage AI's servers is shared according to the terms of service of voyageai.com.",
     ],
     logo: VoyageAiLogo,
+  },
+  mistral: {
+    name: "Mistral AI",
+    description: [
+      "Data sent to Mistral AI's servers is shared according to the terms of service of https://mistral.ai.",
+    ],
+    logo: MistralLogo,
   },
   litellm: {
     name: "LiteLLM",

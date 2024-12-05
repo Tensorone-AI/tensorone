@@ -171,6 +171,9 @@ function getLLMProvider({ provider = null, model = null } = {}) {
     case "xai":
       const { XAiLLM } = require("../AiProviders/xai");
       return new XAiLLM(embedder, model);
+    case "nvidia-nim":
+      const { NvidiaNimLLM } = require("../AiProviders/nvidiaNim");
+      return new NvidiaNimLLM(embedder, model);
     default:
       throw new Error(
         `ENV: No valid LLM_PROVIDER value found in environment! Using ${process.env.LLM_PROVIDER}`
@@ -214,6 +217,9 @@ function getEmbeddingEngineSelection() {
     case "litellm":
       const { LiteLLMEmbedder } = require("../EmbeddingEngines/liteLLM");
       return new LiteLLMEmbedder();
+    case "mistral":
+      const { MistralEmbedder } = require("../EmbeddingEngines/mistral");
+      return new MistralEmbedder();
     case "generic-openai":
       const {
         GenericOpenAiEmbedder,
@@ -306,6 +312,9 @@ function getLLMProviderClass({ provider = null } = {}) {
     case "xai":
       const { XAiLLM } = require("../AiProviders/xai");
       return XAiLLM;
+    case "nvidia-nim":
+      const { NvidiaNimLLM } = require("../AiProviders/nvidiaNim");
+      return NvidiaNimLLM;
     default:
       return null;
   }
