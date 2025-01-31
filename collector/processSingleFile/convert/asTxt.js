@@ -1,5 +1,5 @@
 const { v4 } = require("uuid");
-const { EPubLoader } = require("langchain/document_loaders/fs/epub");
+const fs = require("fs");
 const { tokenizeString } = require("../../utils/tokenizer");
 const {
   createdDate,
@@ -8,14 +8,12 @@ const {
 } = require("../../utils/files");
 const { default: slugify } = require("slugify");
 
-async function asEPub({ fullFilePath = "", filename = "" }) {
+async function asTxt({ fullFilePath = "", filename = "" }) {
   let content = "";
   try {
-    const loader = new EPubLoader(fullFilePath, { splitChapters: false });
-    const docs = await loader.load();
-    docs.forEach((doc) => (content += doc.pageContent));
+    content = fs.readFileSync(fullFilePath, "utf8");
   } catch (err) {
-    console.error("Could not read epub file!", err);
+    console.error("Could not read file!", err);
   }
 
   if (!content?.length) {
@@ -35,7 +33,7 @@ async function asEPub({ fullFilePath = "", filename = "" }) {
     title: filename,
     docAuthor: "Unknown", // TODO: Find a better author
     description: "Unknown", // TODO: Find a better description
-    docSource: "a epub file uploaded by the user.",
+    docSource: "a text file uploaded by the user.",
     chunkSource: "",
     published: createdDate(fullFilePath),
     wordCount: content.split(" ").length,
@@ -52,4 +50,4 @@ async function asEPub({ fullFilePath = "", filename = "" }) {
   return { success: true, reason: null, documents: [document] };
 }
 
-module.exports = asEPub;
+module.exports = asTxt;

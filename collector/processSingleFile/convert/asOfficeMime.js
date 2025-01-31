@@ -1,24 +1,23 @@
 const { v4 } = require("uuid");
-const { EPubLoader } = require("langchain/document_loaders/fs/epub");
-const { tokenizeString } = require("../../utils/tokenizer");
+const officeParser = require("officeparser");
 const {
   createdDate,
   trashFile,
   writeToServerDocuments,
 } = require("../../utils/files");
+const { tokenizeString } = require("../../utils/tokenizer");
 const { default: slugify } = require("slugify");
 
-async function asEPub({ fullFilePath = "", filename = "" }) {
+async function asOfficeMime({ fullFilePath = "", filename = "" }) {
+  console.log(`-- Working ${filename} --`);
   let content = "";
   try {
-    const loader = new EPubLoader(fullFilePath, { splitChapters: false });
-    const docs = await loader.load();
-    docs.forEach((doc) => (content += doc.pageContent));
-  } catch (err) {
-    console.error("Could not read epub file!", err);
+    content = await officeParser.parseOfficeAsync(fullFilePath);
+  } catch (error) {
+    console.error(`Could not parse office or office-like file`, error);
   }
 
-  if (!content?.length) {
+  if (!content.length) {
     console.error(`Resulting text content was empty for ${filename}.`);
     trashFile(fullFilePath);
     return {
@@ -28,14 +27,13 @@ async function asEPub({ fullFilePath = "", filename = "" }) {
     };
   }
 
-  console.log(`-- Working ${filename} --`);
   const data = {
     id: v4(),
     url: "file://" + fullFilePath,
     title: filename,
-    docAuthor: "Unknown", // TODO: Find a better author
-    description: "Unknown", // TODO: Find a better description
-    docSource: "a epub file uploaded by the user.",
+    docAuthor: "no author found",
+    description: "No description found.",
+    docSource: "Office file uploaded by the user.",
     chunkSource: "",
     published: createdDate(fullFilePath),
     wordCount: content.split(" ").length,
@@ -52,4 +50,4 @@ async function asEPub({ fullFilePath = "", filename = "" }) {
   return { success: true, reason: null, documents: [document] };
 }
 
-module.exports = asEPub;
+module.exports = asOfficeMime;
