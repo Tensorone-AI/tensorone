@@ -52,7 +52,7 @@ const KEY_MAPPING = {
   },
   AnthropicModelPref: {
     envKey: "ANTHROPIC_MODEL_PREF",
-    checks: [isNotEmpty, validAnthropicModel],
+    checks: [isNotEmpty],
   },
 
   GeminiLLMApiKey: {
@@ -755,27 +755,6 @@ function validGeminiSafetySetting(input = "") {
     : `Invalid Safety setting. Must be one of ${validModes.join(", ")}.`;
 }
 
-function validAnthropicModel(input = "") {
-  const validModels = [
-    "claude-instant-1.2",
-    "claude-2.0",
-    "claude-2.1",
-    "claude-3-haiku-20240307",
-    "claude-3-sonnet-20240229",
-    "claude-3-opus-latest",
-    "claude-3-5-haiku-latest",
-    "claude-3-5-haiku-20241022",
-    "claude-3-5-sonnet-latest",
-    "claude-3-5-sonnet-20241022",
-    "claude-3-5-sonnet-20240620",
-    "claude-3-7-sonnet-20250219",
-    "claude-3-7-sonnet-latest",
-  ];
-  return validModels.includes(input)
-    ? null
-    : `Invalid Model type. Must be one of ${validModels.join(", ")}.`;
-}
-
 function supportedEmbeddingModel(input = "") {
   const supported = [
     "openai",
@@ -821,8 +800,6 @@ function validChromaURL(input = "") {
 function validOpenAiTokenLimit(input = "") {
   const tokenLimit = Number(input);
   if (isNaN(tokenLimit)) return "Token limit is not a number";
-  if (![4_096, 16_384, 8_192, 32_768, 128_000].includes(tokenLimit))
-    return "Invalid OpenAI token limit.";
   return null;
 }
 
