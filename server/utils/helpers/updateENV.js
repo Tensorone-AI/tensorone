@@ -1,3 +1,4 @@
+const { Telemetry } = require("../../models/telemetry");
 const { resetAllVectorStores } = require("../vectorStore/resetAllVectorStores");
 
 const KEY_MAPPING = {
@@ -477,6 +478,11 @@ const KEY_MAPPING = {
   DisableTelemetry: {
     envKey: "DISABLE_TELEMETRY",
     checks: [],
+    postUpdate: [
+      (_, __, nextValue) => {
+        if (nextValue === "true") Telemetry.sendTelemetry("telemetry_disabled");
+      },
+    ],
   },
 
   // Agent Integration ENVs
@@ -958,6 +964,9 @@ function dumpENV() {
 
     // OCR Language Support
     "TARGET_OCR_LANG",
+
+    // Collector API common ENV - allows bypassing URL validation checks
+    "COLLECTOR_ALLOW_ANY_IP",
   ];
 
   // Simple sanitization of each value to prevent ENV injection via newline or quote escaping.
