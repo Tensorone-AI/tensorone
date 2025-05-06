@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Fragment } from "react";
 import { chatPrompt } from "@/utils/chat";
 import { useTranslation } from "react-i18next";
 import SystemPromptVariable from "@/models/systemPromptVariable";
 import Highlighter from "react-highlight-words";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import paths from "@/utils/paths";
 
 export default function ChatPromptSettings({ workspace, setHasChanges }) {
@@ -12,6 +12,7 @@ export default function ChatPromptSettings({ workspace, setHasChanges }) {
   const [prompt, setPrompt] = useState(chatPrompt(workspace));
   const [isEditing, setIsEditing] = useState(false);
   const promptRef = useRef(null);
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     async function setupVariableHighlighting() {
@@ -22,10 +23,9 @@ export default function ChatPromptSettings({ workspace, setHasChanges }) {
   }, []);
 
   useEffect(() => {
-    if (window.location.hash === "#system-prompts") {
+    if (searchParams.get("action") === "focus-system-prompt")
       setIsEditing(true);
-    }
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     if (isEditing && promptRef.current) {
@@ -52,15 +52,12 @@ export default function ChatPromptSettings({ workspace, setHasChanges }) {
           </Link>{" "}
           like:{" "}
           {availableVariables.slice(0, 3).map((v, i) => (
-            <>
-              <span
-                key={v.key}
-                className="bg-theme-settings-input-bg px-1 py-0.5 rounded"
-              >
+            <Fragment key={v.key}>
+              <span className="bg-theme-settings-input-bg px-1 py-0.5 rounded">
                 {`{${v.key}}`}
               </span>
               {i < availableVariables.length - 1 && ", "}
-            </>
+            </Fragment>
           ))}
           {availableVariables.length > 3 && (
             <Link
