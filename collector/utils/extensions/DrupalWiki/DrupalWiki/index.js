@@ -7,7 +7,11 @@
 
 const { htmlToText } = require("html-to-text");
 const { tokenizeString } = require("../../../tokenizer");
-const { sanitizeFileName, writeToServerDocuments, documentsFolder } = require("../../../files");
+const {
+  sanitizeFileName,
+  writeToServerDocuments,
+  documentsFolder,
+} = require("../../../files");
 const { default: slugify } = require("slugify");
 const path = require("path");
 const fs = require("fs");
@@ -180,10 +184,6 @@ class DrupalWiki {
     // show up (deduplication).
     const targetUUID = `${hostname}.${page.spaceId}.${page.id}.${page.created}`;
     const wordCount = page.processedBody.split(" ").length;
-    const tokenCount =
-      page.processedBody.length > 0
-        ? tokenizeString(page.processedBody).length
-        : 0;
     const data = {
       id: targetUUID,
       url: `drupalwiki://${page.url}`,
@@ -195,7 +195,7 @@ class DrupalWiki {
       published: new Date().toLocaleString(),
       wordCount: wordCount,
       pageContent: page.processedBody,
-      token_count_estimate: tokenCount,
+      token_count_estimate: tokenizeString(page.processedBody),
     };
 
     const fileName = sanitizeFileName(`${slugify(page.title)}-${data.id}`);
