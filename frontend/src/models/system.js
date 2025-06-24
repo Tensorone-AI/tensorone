@@ -3,6 +3,7 @@ import { baseHeaders, safeJsonParse } from "@/utils/request";
 import DataConnector from "./dataConnector";
 import LiveDocumentSync from "./experimental/liveSync";
 import AgentPlugins from "./experimental/agentPlugins";
+import SystemPromptVariable from "./systemPromptVariable";
 
 const System = {
   cacheKeys: {
@@ -10,6 +11,7 @@ const System = {
     supportEmail: "anythingllm_support_email",
     customAppName: "anythingllm_custom_app_name",
     canViewChatHistory: "anythingllm_can_view_chat_history",
+    deploymentVersion: "anythingllm_deployment_version",
   },
   ping: async function () {
     return await fetch(`${API_BASE}/ping`)
@@ -741,10 +743,41 @@ const System = {
       });
   },
 
+  /**
+   * Fetches the app version from the server.
+   * @returns {Promise<string | null>} The app version.
+   */
+  fetchAppVersion: async function () {
+    const cache = window.localStorage.getItem(this.cacheKeys.deploymentVersion);
+    const { version, lastFetched } = cache
+      ? safeJsonParse(cache, { version: null, lastFetched: 0 })
+      : { version: null, lastFetched: 0 };
+
+    if (!!version && Date.now() - lastFetched < 3_600_000) return version;
+    const newVersion = await fetch(`${API_BASE}/utils/metrics`, {
+      method: "GET",
+      cache: "no-cache",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Could not fetch app version.");
+        return res.json();
+      })
+      .then((res) => res?.version)
+      .catch(() => null);
+
+    if (!newVersion) return null;
+    window.localStorage.setItem(
+      this.cacheKeys.deploymentVersion,
+      JSON.stringify({ version: newVersion, lastFetched: Date.now() })
+    );
+    return newVersion;
+  },
+
   experimentalFeatures: {
     liveSync: LiveDocumentSync,
     agentPlugins: AgentPlugins,
   },
+  promptVariables: SystemPromptVariable,
 };
 
 export default System;
