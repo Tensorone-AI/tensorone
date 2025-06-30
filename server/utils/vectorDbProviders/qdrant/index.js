@@ -123,7 +123,7 @@ const QDrant = {
     }
     if (!dimensions)
       throw new Error(
-        `Qdrant:getOrCreateCollection Unable to infer vector dimension from input. Open an issue on Github for support.`
+        `Qdrant:getOrCreateCollection Unable to infer vector dimension from input. Open an issue on GitHub for support.`
       );
     await client.createCollection(namespace, {
       vectors: {
@@ -146,7 +146,7 @@ const QDrant = {
       if (!pageContent || pageContent.length == 0) return false;
 
       console.log("Adding new vectorized document into namespace", namespace);
-      if (skipCache) {
+      if (!skipCache) {
         const cacheResult = await cachedVectorInformation(fullFilePath);
         if (cacheResult.exists) {
           const { client } = await this.connect();
