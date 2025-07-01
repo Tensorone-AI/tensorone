@@ -1,12 +1,11 @@
 import Sidebar from "@/components/SettingsSidebar";
 import { isMobile } from "react-device-detect";
 import { useTranslation } from "react-i18next";
-import AutoSubmit from "../components/AutoSubmit";
-import AutoSpeak from "../components/AutoSpeak";
-import SpellCheck from "../components/SpellCheck";
-import ShowScrollbar from "../components/ShowScrollbar";
+import LanguagePreference from "../components/LanguagePreference";
+import ThemePreference from "../components/ThemePreference";
+import { MessageDirection } from "../components/MessageDirection";
 
-export default function ChatSettings() {
+export default function InterfaceSettings() {
   const { t } = useTranslation();
 
   return (
@@ -20,17 +19,16 @@ export default function ChatSettings() {
           <div className="w-full flex flex-col gap-y-1 pb-6 border-white light:border-theme-sidebar-border border-b-2 border-opacity-10">
             <div className="items-center">
               <p className="text-lg leading-6 font-bold text-white">
-                {t("customization.chat.title")}
+                {t("customization.interface.title")}
               </p>
             </div>
             <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
-              {t("customization.chat.description")}
+              {t("customization.interface.description")}
             </p>
           </div>
-          <AutoSubmit />
-          <AutoSpeak />
-          <SpellCheck />
-          <ShowScrollbar />
+          <ThemePreference />
+          <LanguagePreference />
+          <MessageDirection />
         </div>
       </div>
     </div>
