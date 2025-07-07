@@ -1,3 +1,4 @@
+// Anything with "null" requires a translation. Contribute to translation via a PR!
 const TRANSLATIONS = {
   onboarding: {
     home: {
@@ -20,7 +21,6 @@ const TRANSLATIONS = {
       passwordReq: "Senhas devem ter pelo menos 8 caracteres.",
       passwordWarn:
         "É importante salvar esta senha pois não há método de recuperação.",
-
       adminUsername: "Nome de usuário admin",
       adminUsernameReq:
         "O nome deve ter pelo menos 6 caracteres e conter apenas letras minúsculas, números, sublinhados e hífens, sem espaços.",
@@ -39,7 +39,6 @@ const TRANSLATIONS = {
     survey: {
       title: "Bem-vindo ao AnythingLLM",
       description: "Ajude-nos a melhorar o AnythingLLM. Opcional.",
-
       email: "Qual seu email?",
       useCase: "Como você usará o AnythingLLM?",
       useCaseWork: "Para trabalho",
@@ -70,8 +69,6 @@ const TRANSLATIONS = {
     yes: "Sim",
     no: "Não",
   },
-
-  // Setting Sidebar menu items.
   settings: {
     title: "Configurações da Instância",
     system: "Configurações Gerais",
@@ -90,8 +87,8 @@ const TRANSLATIONS = {
     "text-splitting": "Divisor de Texto",
     "voice-speech": "Voz e Fala",
     "vector-database": "Banco de Dados Vetorial",
-    embeds: "Incorporador de Chat",
-    "embed-chats": "Histórico de Incorporações",
+    embeds: "Vinculador de Chat",
+    "embed-chats": "Histórico de vínculos",
     security: "Segurança",
     "event-logs": "Logs de Eventos",
     privacy: "Privacidade e Dados",
@@ -104,8 +101,6 @@ const TRANSLATIONS = {
     contact: "Suporte",
     "browser-extension": "Extensão de Navegador",
   },
-
-  // Page Definitions
   login: {
     "multi-user": {
       welcome: "Bem-vindo ao",
@@ -129,7 +124,6 @@ const TRANSLATIONS = {
       "back-to-login": "Voltar ao Login",
     },
   },
-
   welcomeMessage: {
     part1:
       "Bem-vindo ao AnythingLLM, uma ferramenta de IA open-source da Mintplex Labs que transforma qualquer conteúdo em um chatbot treinado. AnythingLLM é um software BYOK (bring-your-own-keys), sem taxas ou assinaturas.",
@@ -150,7 +144,6 @@ const TRANSLATIONS = {
     starOnGitHub: "Estrelar no GitHub",
     contact: "Contate a Mintplex Labs",
   },
-
   "main-page": {
     noWorkspaceError: "Por favor, crie um workspace antes de iniciar um chat.",
     checklist: {
@@ -231,15 +224,13 @@ const TRANSLATIONS = {
         docs: "Documentação",
         star: "Avalie-nos no Github",
       },
+      keyboardShortcuts: null,
     },
   },
-
   "new-workspace": {
     title: "Novo Workspace",
     placeholder: "Meu Workspace",
   },
-
-  // Workspace Settings menu items
   "workspaces—settings": {
     general: "Configurações Gerais",
     chat: "Configurações de Chat",
@@ -247,8 +238,6 @@ const TRANSLATIONS = {
     members: "Membros",
     agent: "Configuração de Agente",
   },
-
-  // General Appearance
   general: {
     vector: {
       title: "Contagem de Vetores",
@@ -283,8 +272,6 @@ const TRANSLATIONS = {
         "workspace. Isso removerá todos os vetores do banco de dados.\n\nOs arquivos originais permanecerão intactos. Esta ação é irreversível.",
     },
   },
-
-  // Chat Settings
   chat: {
     llm: {
       title: "Provedor de LLM",
@@ -335,6 +322,7 @@ const TRANSLATIONS = {
         clearAllConfirm:
           "Tem certeza que deseja limpar todo o histórico? Esta ação é irreversível.",
         expand: "Expandir",
+        publish: null,
       },
     },
     refusal: {
@@ -343,6 +331,8 @@ const TRANSLATIONS = {
       query: "consulta",
       "desc-end":
         "modo, você pode definir uma resposta personalizada quando nenhum contexto for encontrado.",
+      "tooltip-title": null,
+      "tooltip-description": null,
     },
     temperature: {
       title: "Temperatura do LLM",
@@ -352,8 +342,6 @@ const TRANSLATIONS = {
       hint: "Cada modelo LLM tem faixas de valores válidos. Consulte seu provedor.",
     },
   },
-
-  // Vector Database
   "vector-workspace": {
     identifier: "Identificador do banco de dados",
     snippets: {
@@ -380,8 +368,6 @@ const TRANSLATIONS = {
       success: "Banco de dados resetado com sucesso!",
     },
   },
-
-  // Agent Configuration
   agent: {
     "performance-warning":
       "O desempenho de LLMs sem suporte a tool-calling varia conforme as capacidades do modelo. Algumas funcionalidades podem ser limitadas.",
@@ -401,7 +387,6 @@ const TRANSLATIONS = {
         "O modelo LLM específico que será usado pelo agente @agent deste workspace.",
       wait: "-- aguardando modelos --",
     },
-
     skill: {
       title: "Habilidades padrão do agente",
       description:
@@ -439,8 +424,6 @@ const TRANSLATIONS = {
       },
     },
   },
-
-  // Workspace Chats
   recorded: {
     title: "Chats do Workspace",
     description:
@@ -455,7 +438,6 @@ const TRANSLATIONS = {
       at: "Enviado Em",
     },
   },
-
   customization: {
     interface: {
       title: "Preferências de UI",
@@ -549,8 +531,6 @@ const TRANSLATIONS = {
       },
     },
   },
-
-  // API Keys
   api: {
     title: "Chaves API",
     description: "Chaves API permitem acesso programático a esta instância.",
@@ -562,14 +542,23 @@ const TRANSLATIONS = {
       created: "Criado Em",
     },
   },
-
   llm: {
     title: "Preferência de LLM",
     description:
       "Credenciais e configurações do seu provedor de LLM. Essas chaves devem estar corretas para o funcionamento adequado.",
     provider: "Provedor de LLM",
+    providers: {
+      azure_openai: {
+        azure_service_endpoint: null,
+        api_key: null,
+        chat_deployment_name: null,
+        chat_model_token_limit: null,
+        model_type: null,
+        default: null,
+        reasoning: null,
+      },
+    },
   },
-
   transcription: {
     title: "Preferência de Transcrição",
     description:
@@ -581,7 +570,6 @@ const TRANSLATIONS = {
     "warn-end":
       "O modelo interno será baixado automaticamente no primeiro uso.",
   },
-
   embedding: {
     title: "Preferência de Vínculo",
     "desc-start":
@@ -594,7 +582,6 @@ const TRANSLATIONS = {
         "Nenhuma configuração é necessária ao usar o mecanismo nativo do AnythingLLM.",
     },
   },
-
   text: {
     title: "Preferências de Divisão de Texto",
     "desc-start":
@@ -608,15 +595,12 @@ const TRANSLATIONS = {
       description: "Comprimento máximo de caracteres em um único vetor.",
       recommend: "Tamanho máximo do modelo de vínculo é",
     },
-
     overlap: {
       title: "Sobreposição de Trechos",
       description:
         "Sobreposição máxima de caracteres entre dois trechos adjacentes.",
     },
   },
-
-  // Vector Database
   vector: {
     title: "Banco de Dados Vetorial",
     description:
@@ -626,8 +610,6 @@ const TRANSLATIONS = {
       description: "Nenhuma configuração necessária para LanceDB.",
     },
   },
-
-  // Embeddable Chat Widgets
   embeddable: {
     title: "Widgets de Chat vinculado",
     description:
@@ -636,10 +618,10 @@ const TRANSLATIONS = {
     table: {
       workspace: "Workspace",
       chats: "Chats Enviados",
-      Active: "Domínios Ativos",
+      active: "Domínios Ativos",
+      created: null,
     },
   },
-
   "embed-chats": {
     title: "Chats Vinculados",
     export: "Exportar",
@@ -652,7 +634,6 @@ const TRANSLATIONS = {
       at: "Enviado Em",
     },
   },
-
   multi: {
     title: "Modo Multi-Usuário",
     description:
@@ -677,8 +658,6 @@ const TRANSLATIONS = {
       password: "Senha da instância",
     },
   },
-
-  // Event Logs
   event: {
     title: "Logs de Eventos",
     description:
@@ -690,8 +669,6 @@ const TRANSLATIONS = {
       occurred: "Ocorrido Em",
     },
   },
-
-  // Privacy & Data-Handling
   privacy: {
     title: "Privacidade & Dados",
     description:
@@ -701,7 +678,6 @@ const TRANSLATIONS = {
     vector: "Banco de Dados Vetorial",
     anonymous: "Telemetria Anônima Ativa",
   },
-
   connectors: {
     "search-placeholder": "Buscar conectores",
     "no-connectors": "Nenhum conector encontrado.",
@@ -832,7 +808,6 @@ const TRANSLATIONS = {
       task_explained:
         "Após conclusão, o conteúdo da página estará disponível para vínculo.",
     },
-
     manage: {
       documents: "Documentos",
       "data-connectors": "Conectores de Dados",
@@ -898,7 +873,6 @@ const TRANSLATIONS = {
       accept: "Ok, entendi",
     },
   },
-
   chat_window: {
     welcome: "Bem-vindo ao novo workspace.",
     get_started: "Para começar,",
@@ -914,8 +888,48 @@ const TRANSLATIONS = {
     text_size: "Alterar tamanho do texto.",
     microphone: "Fale seu prompt.",
     send: "Enviar prompt para o workspace",
+    tts_speak_message: "Leitura em voz alta da mensagem",
+    copy: "Copiar",
+    regenerate: "Regerar",
+    regenerate_response: "Regerar resposta",
+    good_response: "Resposta satisfatória",
+    more_actions: "Mais ações",
+    hide_citations: "Esconder citações",
+    show_citations: "Exibir citações",
+    pause_tts_speech_message: "Pausar a leitura em voz alta",
+    fork: "Fork",
+    delete: "Excluir",
+    save_submit: "Alterar",
+    cancel: "Cancelar",
+    edit_prompt: "Editar prompt",
+    edit_response: "Editar resposta",
+    at_agent: "@agente",
+    default_agent_description: " - o agente padrão deste workspace.",
+    custom_agents_coming_soon: "mais agentes personalizados em breve!",
+    slash_reset: "/reset",
+    preset_reset_description: "Limpa o histórico do seu chat e inicia um novo",
+    add_new_preset: " Insere um novo Preset",
+    command: "Comando",
+    your_command: "seu-comando",
+    placeholder_prompt:
+      "Este é o conteúdo que será injetado a frente do seu prompt.",
+    description: "Descrição",
+    placeholder_description: "Responde como um poema sobre LLMs.",
+    save: "Salvar",
+    small: "Pequeno",
+    normal: "Normal",
+    large: "Grande",
+    workspace_llm_manager: {
+      search: null,
+      loading_workspace_settings: null,
+      available_models: null,
+      available_models_description: null,
+      save: null,
+      saving: null,
+      missing_credentials: null,
+      missing_credentials_description: null,
+    },
   },
-
   profile_settings: {
     edit_account: "Editar conta",
     profile_picture: "Foto de perfil",
@@ -924,11 +938,116 @@ const TRANSLATIONS = {
     username_description:
       "Somente letras minúsculas, números, sublinhados e hífens. Sem espaços.",
     new_password: "Nova senha",
-    passwort_description: "A senha deve ter no mínimo 8 caracteres",
+    password_description: "A senha deve ter no mínimo 8 caracteres",
     cancel: "Cancelar",
     update_account: "Atualizar conta",
     theme: "Preferência de tema",
     language: "Idioma preferido",
+    failed_upload: null,
+    upload_success: null,
+    failed_remove: null,
+    profile_updated: null,
+    failed_update_user: null,
+    account: null,
+    support: null,
+    signout: null,
+  },
+  "keyboard-shortcuts": {
+    title: "Atalhos de Teclado",
+    shortcuts: {
+      settings: "Ajustes",
+      workspaceSettings: "Abrir os ajustes do workspace",
+      home: "Ir para a página inicial",
+      workspaces: "Gerenciar workspaces",
+      apiKeys: "Ajustes das chaves da API",
+      llmPreferences: "Preferências do LLM",
+      chatSettings: "Ajustes do chat",
+      help: "Exibe ajuda e atalhos",
+      showLLMSelector: null,
+    },
+  },
+  community_hub: {
+    publish: {
+      system_prompt: {
+        success_title: null,
+        success_description: null,
+        success_thank_you: null,
+        view_on_hub: null,
+        modal_title: null,
+        name_label: null,
+        name_description: null,
+        name_placeholder: null,
+        description_label: null,
+        description_description: null,
+        tags_label: null,
+        tags_description: null,
+        tags_placeholder: null,
+        visibility_label: null,
+        public_description: null,
+        private_description: null,
+        publish_button: null,
+        submitting: null,
+        submit: null,
+        prompt_label: null,
+        prompt_description: null,
+        prompt_placeholder: null,
+      },
+      agent_flow: {
+        public_description: null,
+        private_description: null,
+        success_title: null,
+        success_description: null,
+        success_thank_you: null,
+        view_on_hub: null,
+        modal_title: null,
+        name_label: null,
+        name_description: null,
+        name_placeholder: null,
+        description_label: null,
+        description_description: null,
+        tags_label: null,
+        tags_description: null,
+        tags_placeholder: null,
+        visibility_label: null,
+        publish_button: null,
+        submitting: null,
+        submit: null,
+        privacy_note: null,
+      },
+      generic: {
+        unauthenticated: {
+          title: null,
+          description: null,
+          button: null,
+        },
+      },
+      slash_command: {
+        success_title: null,
+        success_description: null,
+        success_thank_you: null,
+        view_on_hub: null,
+        modal_title: null,
+        name_label: null,
+        name_description: null,
+        name_placeholder: null,
+        description_label: null,
+        description_description: null,
+        command_label: null,
+        command_description: null,
+        command_placeholder: null,
+        tags_label: null,
+        tags_description: null,
+        tags_placeholder: null,
+        visibility_label: null,
+        public_description: null,
+        private_description: null,
+        publish_button: null,
+        submitting: null,
+        prompt_label: null,
+        prompt_description: null,
+        prompt_placeholder: null,
+      },
+    },
   },
 };
 
