@@ -262,6 +262,20 @@ const KEY_MAPPING = {
     checks: [nonZero],
   },
 
+  // Dell Pro AI Studio Settings
+  DellProAiStudioBasePath: {
+    envKey: "DPAIS_LLM_BASE_PATH",
+    checks: [isNotEmpty, validDockerizedUrl],
+  },
+  DellProAiStudioModelPref: {
+    envKey: "DPAIS_LLM_MODEL_PREF",
+    checks: [isNotEmpty],
+  },
+  DellProAiStudioTokenLimit: {
+    envKey: "DPAIS_LLM_MODEL_TOKEN_LIMIT",
+    checks: [nonZero],
+  },
+
   EmbeddingEngine: {
     envKey: "EMBEDDING_ENGINE",
     checks: [supportedEmbeddingModel],
@@ -765,6 +779,7 @@ function supportedLLM(input = "") {
     "xai",
     "nvidia-nim",
     "ppio",
+    "dpais",
   ].includes(input);
   return validSelection ? null : `${input} is not a valid LLM provider.`;
 }
@@ -1069,6 +1084,7 @@ function dumpENV() {
     "DISABLE_VIEW_CHAT_HISTORY",
     // Simple SSO
     "SIMPLE_SSO_ENABLED",
+    "SIMPLE_SSO_NO_LOGIN",
     // Community Hub
     "COMMUNITY_HUB_BUNDLE_DOWNLOADS_ENABLED",
 
@@ -1080,6 +1096,9 @@ function dumpENV() {
 
     // Collector API common ENV - allows bypassing URL validation checks
     "COLLECTOR_ALLOW_ANY_IP",
+
+    // Allow disabling of streaming for generic openai
+    "GENERIC_OPENAI_STREAMING_DISABLED",
   ];
 
   // Simple sanitization of each value to prevent ENV injection via newline or quote escaping.
