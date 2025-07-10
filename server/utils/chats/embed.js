@@ -34,7 +34,7 @@ async function streamChatWithForEmbed(
   });
   const VectorDb = getVectorDbClass();
 
-  const messageLimit = 20;
+  const messageLimit = embed.message_limit ?? 20;
   const hasVectorizedSpace = await VectorDb.hasNamespace(embed.workspace.slug);
   const embeddingsCount = await VectorDb.namespaceCount(embed.workspace.slug);
 
@@ -152,7 +152,7 @@ async function streamChatWithForEmbed(
   // and build system messages based on inputs and history.
   const messages = await LLMConnector.compressMessages(
     {
-      systemPrompt: chatPrompt(embed.workspace),
+      systemPrompt: await chatPrompt(embed.workspace, username),
       userPrompt: message,
       contextTexts,
       chatHistory,
