@@ -54,7 +54,10 @@ const { BrowserExtensionApiKey } = require("../models/browserExtensionApiKey");
 const {
   chatHistoryViewable,
 } = require("../utils/middleware/chatHistoryViewable");
-const { simpleSSOEnabled } = require("../utils/middleware/simpleSSOEnabled");
+const {
+  simpleSSOEnabled,
+  simpleSSOLoginDisabled,
+} = require("../utils/middleware/simpleSSOEnabled");
 const { TemporaryAuthToken } = require("../models/temporaryAuthToken");
 const { SystemPromptVariables } = require("../models/systemPromptVariables");
 const { VALID_COMMANDS } = require("../utils/chats");
@@ -116,6 +119,17 @@ function systemEndpoints(app) {
       const bcrypt = require("bcrypt");
 
       if (await SystemSettings.isMultiUserMode()) {
+        if (simpleSSOLoginDisabled()) {
+          response.status(403).json({
+            user: null,
+            valid: false,
+            token: null,
+            message:
+              "[005] Login via credentials has been disabled by the administrator.",
+          });
+          return;
+        }
+
         const { username, password } = reqBody(request);
         const existingUser = await User._get({ username: String(username) });
 
@@ -1365,6 +1379,42 @@ function systemEndpoints(app) {
         response.status(500).json({
           success: false,
           error: `Failed to delete system prompt variable: ${error.message}`,
+        });
+      }
+    }
+  );
+
+  app.post(
+    "/system/validate-sql-connection",
+    [validatedRequest, flexUserRoleValid([ROLES.admin])],
+    async (request, response) => {
+      try {
+        const { engine, connectionString } = reqBody(request);
+        if (!engine || !connectionString) {
+          return response.status(400).json({
+            success: false,
+            error: "Both engine and connection details are required.",
+          });
+        }
+
+        const {
+          validateConnection,
+        } = require("../utils/agents/aibitat/plugins/sql-agent/SQLConnectors");
+        const result = await validateConnection(engine, { connectionString });
+
+        if (!result.success) {
+          return response.status(200).json({
+            success: false,
+            error: `Unable to connect to ${engine}. Please verify your connection details.`,
+          });
+        }
+
+        response.status(200).json(result);
+      } catch (error) {
+        console.error("SQL validation error:", error);
+        response.status(500).json({
+          success: false,
+          error: `Unable to connect to ${engine}. Please verify your connection details.`,
         });
       }
     }
