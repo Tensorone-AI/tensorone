@@ -8,6 +8,7 @@ const prisma = require("../utils/prisma");
 const { v4 } = require("uuid");
 const { MetaGenerator } = require("../utils/boot/MetaGenerator");
 const { PGVector } = require("../utils/vectorDbProviders/pgvector");
+const { getBaseLLMProviderModel } = require("../utils/helpers");
 
 function isNullOrNaN(value) {
   if (value === null) return true;
@@ -227,6 +228,7 @@ const SystemSettings = {
       // LLM Provider Selection Settings & Configs
       // --------------------------------------------------------
       LLMProvider: llmProvider,
+      LLMModel: getBaseLLMProviderModel({ provider: llmProvider }) || null,
       ...this.llmPreferenceKeys(),
 
       // --------------------------------------------------------
@@ -254,6 +256,7 @@ const SystemSettings = {
         process.env.TTS_PIPER_VOICE_MODEL ?? "en_US-hfc_female-medium",
       // OpenAI Generic TTS
       TTSOpenAICompatibleKey: !!process.env.TTS_OPEN_AI_COMPATIBLE_KEY,
+      TTSOpenAICompatibleModel: process.env.TTS_OPEN_AI_COMPATIBLE_MODEL,
       TTSOpenAICompatibleVoiceModel:
         process.env.TTS_OPEN_AI_COMPATIBLE_VOICE_MODEL,
       TTSOpenAICompatibleEndpoint: process.env.TTS_OPEN_AI_COMPATIBLE_ENDPOINT,
@@ -277,6 +280,12 @@ const SystemSettings = {
       // Disable View Chat History for the whole instance.
       DisableViewChatHistory:
         "DISABLE_VIEW_CHAT_HISTORY" in process.env || false,
+
+      // --------------------------------------------------------
+      // Simple SSO Settings
+      // --------------------------------------------------------
+      SimpleSSOEnabled: "SIMPLE_SSO_ENABLED" in process.env || false,
+      SimpleSSONoLogin: "SIMPLE_SSO_NO_LOGIN" in process.env || false,
     };
   },
 
@@ -574,6 +583,12 @@ const SystemSettings = {
       // PPIO API keys
       PPIOApiKey: !!process.env.PPIO_API_KEY,
       PPIOModelPref: process.env.PPIO_MODEL_PREF,
+
+      // Dell Pro AI Studio Keys
+      DellProAiStudioBasePath: process.env.DPAIS_LLM_BASE_PATH,
+      DellProAiStudioModelPref: process.env.DPAIS_LLM_MODEL_PREF,
+      DellProAiStudioTokenLimit:
+        process.env.DPAIS_LLM_MODEL_TOKEN_LIMIT ?? 4096,
     };
   },
 
