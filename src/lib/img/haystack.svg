@@ -1,0 +1,8 @@
+<svg width="23" height="38" viewBox="0 0 23 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="11.5" cy="11.5" r="9" stroke="#ECF2FF" style="stroke:#ECF2FF;stroke:color(display-p3 0.9250 0.9475 1.0000);stroke-opacity:1;" stroke-width="5"/>
+<rect y="23" width="12" height="23" transform="rotate(-90 0 23)" fill="#0C0D12" style="fill:#0C0D12;fill:color(display-p3 0.0478 0.0527 0.0722);fill-opacity:1;"/>
+<path d="M0 11H5V22C5 24.7614 2.76142 27 0 27V11Z" fill="#ECF2FF" style="fill:#ECF2FF;fill:color(display-p3 0.9250 0.9475 1.0000);fill-opacity:1;"/>
+<path d="M1 20L1 15L12 15L12 20L1 20Z" fill="#ECF2FF" style="fill:#ECF2FF;fill:color(display-p3 0.9250 0.9475 1.0000);fill-opacity:1;"/>
+<path d="M18 11H23V27C20.2386 27 18 24.7614 18 22V11Z" fill="#ECF2FF" style="fill:#ECF2FF;fill:color(display-p3 0.9250 0.9475 1.0000);fill-opacity:1;"/>
+<path d="M9 11.5C9 10.1193 10.1193 9 11.5 9C12.8807 9 14 10.1189 14 11.4996C14 17.3873 14 24.551 14 30C11.2386 30 9 27.7614 9 25V11.5Z" fill="#ECF2FF" style="fill:#ECF2FF;fill:color(display-p3 0.9250 0.9475 1.0000);fill-opacity:1;"/>
+</svg>

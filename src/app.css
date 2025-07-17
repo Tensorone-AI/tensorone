@@ -1,0 +1,670 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('lib/fonts/Satoshi-Light.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('lib/fonts/Satoshi-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('lib/fonts/Satoshi-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('lib/fonts/Satoshi-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('lib/fonts/Satoshi-Black.woff2') format('woff2');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Thin.woff2') format('woff2');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-ExtraLight.woff2') format('woff2');
+	font-weight: 200;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Light.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-SemiBold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-ExtraBold.woff2') format('woff2');
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'DM Sans';
+	src: url('lib/fonts/DMSans-Black.woff2') format('woff2');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'TASA Orbiter Display';
+	src: url('lib/fonts/TASAOrbiterDisplay-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'TASA Orbiter Display';
+	src: url('lib/fonts/TASAOrbiterDisplay-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'TASA Orbiter Display';
+	src: url('lib/fonts/TASAOrbiterDisplay-SemiBold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'TASA Orbiter Display';
+	src: url('lib/fonts/TASAOrbiterDisplay-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'TASA Orbiter Display';
+	src: url('lib/fonts/TASAOrbiterDisplay-Black.woff2') format('woff2');
+	font-weight: 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-Thin.woff2') format('woff2');
+	font-weight: 100;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-ExtraLight.woff2') format('woff2');
+	font-weight: 200;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-Light.woff2') format('woff2');
+	font-weight: 300;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-SemiBold.woff2') format('woff2');
+	font-weight: 600;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Iosevka Term SS01';
+	src: url('lib/fonts/IosevkaTermSS01-ExtraBold.woff2') format('woff2');
+	font-weight: 800;
+	font-style: normal;
+	font-display: swap;
+}
+
+@layer utilities {
+	@media (min-width: 768px) {
+		/* md breakpoint */
+		.bg-custom-md {
+			background-image: url('lib/img/bg-login.png');
+			background-size: cover;
+			background-position: center;
+		}
+	}
+	.button-custom {
+		cursor: pointer;
+	}
+	.button-custom:active {
+		transform: scale(0.96);
+	}
+	.arrow-custom:active {
+		transform: scale(0.9);
+	}
+	.active-month {
+		border: 1px solid #23f784 !important;
+		color: #23f784;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		padding-top: 0.25rem;
+		padding-bottom: 0.25rem;
+		background-color: #00200f !important;
+	}
+	.border-gone {
+		border-bottom: 1px solid transparent;
+	}
+	.button-join {
+		border: 1px solid #444444;
+	}
+	.active-join {
+		background-color: white;
+		color: black !important;
+		border: 1px solid white !important;
+		border-radius: 0.75rem !important;
+	}
+	.active-join div {
+		color: black !important;
+	}
+	.active-join:hover {
+		background-color: white !important;
+	}
+}
+
+@media (hover: hover) {
+	.menu li > *:not(ul, .menu-title, details, .btn):active,
+	.menu li > *:not(ul, .menu-title, details, .btn).active,
+	.menu li > details > summary:active {
+		--tw-bg-opacity: 1;
+		background-color: transparent;
+		--tw-text-opacity: 1;
+		color: white;
+	}
+}
+
+@media (hover: hover) {
+	.menu li > *:not(ul, .menu-title, details, .btn):active,
+	.menu li > *:not(ul, .menu-title, details, .btn).active,
+	.menu li > details > summary:active {
+		--tw-bg-opacity: 1;
+		background-color: transparent;
+		--tw-text-opacity: 1;
+		color: white;
+	}
+}
+
+@media (hover: hover) {
+	.menu li > *:not(ul, .menu-title, details, .btn):active,
+	.menu li > *:not(ul, .menu-title, details, .btn).active,
+	.menu li > details > summary:active {
+		--tw-bg-opacity: 1;
+		background-color: transparent;
+		--tw-text-opacity: 1;
+		color: white;
+	}
+}
+
+@media (hover: hover) {
+	:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+			.active,
+			.btn
+		):hover,
+	:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+			.active,
+			.btn
+		):hover {
+		cursor: pointer;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+	@supports (color: oklch(0% 0 0)) {
+		:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+				.active,
+				.btn
+			):hover,
+		:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+				.active,
+				.btn
+			):hover {
+			background-color: transparent;
+		}
+	}
+}
+
+@media (hover: hover) {
+	:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+			.active,
+			.btn
+		):hover,
+	:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+			.active,
+			.btn
+		):hover {
+		cursor: pointer;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+	@supports (color: oklch(0% 0 0)) {
+		:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+				.active,
+				.btn
+			):hover,
+		:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+				.active,
+				.btn
+			):hover {
+			background-color: transparent;
+		}
+	}
+}
+
+@media (hover: hover) {
+	:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+			.active,
+			.btn
+		):hover,
+	:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+			.active,
+			.btn
+		):hover {
+		cursor: pointer;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+	@supports (color: oklch(0% 0 0)) {
+		:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+				.active,
+				.btn
+			):hover,
+		:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+				.active,
+				.btn
+			):hover {
+			background-color: transparent;
+		}
+	}
+}
+
+@media (hover: hover) {
+	:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+			.active,
+			.btn
+		):hover,
+	:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+			.active,
+			.btn
+		):hover {
+		cursor: pointer;
+		outline: 2px solid transparent;
+		outline-offset: 2px;
+	}
+	@supports (color: oklch(0% 0 0)) {
+		:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+				.active,
+				.btn
+			):hover,
+		:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+				.active,
+				.btn
+			):hover {
+			background-color: transparent;
+		}
+	}
+}
+
+:where(.menu li:empty) {
+	--tw-bg-opacity: 1;
+	background-color: transparent;
+	opacity: 0.1;
+	margin: 0.5rem 1rem;
+	height: 1px;
+}
+
+.menu :where(li ul):before {
+	position: absolute;
+	bottom: 0.75rem;
+	inset-inline-start: 0px;
+	top: 0.75rem;
+	width: 1px;
+	--tw-bg-opacity: 1;
+	background-color: transparent;
+	opacity: 0.1;
+	content: '';
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > *:not(ul, details, .menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	).focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):not(
+		summary,
+		.active,
+		.btn
+	):focus,
+:where(.menu li:not(.menu-title, .disabled) > details > summary:not(.menu-title)):is(summary):not(
+		.active,
+		.btn
+	):focus-visible {
+	cursor: pointer;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+	outline: 2px solid transparent;
+	outline-offset: 2px;
+}
+
+.menu li > *:not(ul, .menu-title, details, .btn):active,
+.menu li > *:not(ul, .menu-title, details, .btn).active,
+.menu li > details > summary:active {
+	--tw-bg-opacity: 1;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+}
+
+.menu li > *:not(ul, .menu-title, details, .btn):active,
+.menu li > *:not(ul, .menu-title, details, .btn).active,
+.menu li > details > summary:active {
+	--tw-bg-opacity: 1;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+}
+
+.menu li > *:not(ul, .menu-title, details, .btn):active,
+.menu li > *:not(ul, .menu-title, details, .btn).active,
+.menu li > details > summary:active {
+	--tw-bg-opacity: 1;
+	background-color: transparent;
+	--tw-text-opacity: 1;
+	color: white;
+}
