@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 
-const SECRET_KEY = 'TensorOne-Share-Key-2024';
+const SECRET_KEY = 'SomeSecretKey123!'; // Replace with your actual secret key
 
 export function encryptShareableID(id) {
 	try {

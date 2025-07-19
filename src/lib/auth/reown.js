@@ -5,7 +5,7 @@ import { wallet } from '$lib/stores/wallet';
 import { supabase } from '$lib/db/supabaseClient';
 import { browser } from '$app/environment';
 
-const projectId = '567ea994a72d0339521bdcb6993a8e2d';
+const projectId = import.meta.env.PUBLIC_REOWN_PROJECT_ID || 'default_project_id';
 let appKit = undefined;
 const networks = [mainnet];
 

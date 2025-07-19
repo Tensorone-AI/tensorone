@@ -1,0 +1,6 @@
+[submodule "backend-mcp"]
+    path = backend-mcp
+    url = https://github.com/Tensorone-AI/todo
+[submodule "backend-dapp"]
+    path = backend-dapp
+    url = https://github.com/Tensorone-AI/todo
