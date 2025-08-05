@@ -1,38 +1,22 @@
-# create-svelte
+<p align="center">
+  <a href="https://tensorone.ai">
+    <img alt="Tensor One Logo" src="change logo" height="80" />
+  </a>
+</p>
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+<h3 align="center">Unlock AI & ML potential with Tensor One. Access and contribute to cutting-edge AI agents & tools. </h3>
 
-## Creating a project
+---
 
-If you're seeing this, you've probably already done this step. Congrats!
+**Tensor One** is an AI infrastructure platform enabling anyone to create, interact with, and scale autonomous AI agents. From no-code agent building to decentralized compute, we’re creating the backbone for the next generation of intelligent software.
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### Get Started
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+- [Website](https://tensorone.ai) — Explore the platform, tools, and product roadmap
+- [dApp](https://dapp.tensorone.ai/) — Run prompts, use AI tools, and deploy agents
+- [Documentation](https://docs.tensorone.ai) — Learn how to build agents, contribute compute, and more
+- [X (formerly Twitter)](https://twitter.com/tensor_one) — Follow for updates, product drops, and threads
+- [Telegram](https://t.me/TensorOneAI) — Join the conversation and ask questions
+- [Blog](https://medium.com/@tensor_one) — Read breakdowns, architecture posts, and launch updates
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+For questions, collaborations, or support, reach out at contact@tensorone.ai
