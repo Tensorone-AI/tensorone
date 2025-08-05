@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://tensorone.ai">
-    <img alt="Tensor One Logo" src="change logo" height="80" />
+    <img alt="Tensor One Logo" src="https://github.com/Tensorone-AI/tensorone/blob/main/images/Logo.png?raw=true" height="80" />
   </a>
 </p>
 
