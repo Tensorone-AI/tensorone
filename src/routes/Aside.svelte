@@ -185,18 +185,16 @@
 				<details
 					open={currentPath === '/agent-templates' ||
 						currentPath === '/create-agent' ||
-						currentPath === '/my-agents' ||
-						currentPath === '/monitor-agents'}
+						currentPath === '/my-agents'}
 				>
 					<summary
 						class={currentPath === '/agent-templates' ||
 						currentPath === '/create-agent' ||
-						currentPath === '/my-agents' ||
-						currentPath === '/monitor-agents'
+						currentPath === '/my-agents'
 							? 'active-tab relative'
 							: ''}
 					>
-						{#if currentPath === '/agent-templates' || currentPath === '/create-agent' || currentPath === '/my-agents' || currentPath === '/monitor-agents'}
+						{#if currentPath === '/agent-templates' || currentPath === '/create-agent' || currentPath === '/my-agents'}
 							<ActiveAside />
 						{/if}
 						<svg
@@ -210,8 +208,7 @@
 								d="M1 3.5C1 2.11929 2.11929 1 3.5 1H7.97059C9.3513 1 10.4706 2.11929 10.4706 3.5V3.91177C10.4706 5.29248 9.3513 6.41177 7.97059 6.41177H3.5C2.11929 6.41177 1 5.29248 1 3.91177V3.5Z"
 								fill={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 							/>
@@ -219,8 +216,7 @@
 								d="M1 12.9706C1 11.5899 2.11929 10.4706 3.5 10.4706H7.97059C9.3513 10.4706 10.4706 11.5899 10.4706 12.9706V21.5C10.4706 22.8807 9.3513 24 7.97059 24H3.5C2.11929 24 1 22.8807 1 21.5V12.9706Z"
 								fill={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 							/>
@@ -228,8 +224,7 @@
 								d="M14.5294 3.5C14.5294 2.11929 15.6487 1 17.0294 1H21.5C22.8807 1 24 2.11929 24 3.5V12.0294C24 13.4101 22.8807 14.5294 21.5 14.5294H17.0294C15.6487 14.5294 14.5294 13.4101 14.5294 12.0294V3.5Z"
 								fill={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 							/>
@@ -237,8 +232,7 @@
 								d="M14.5294 21.0883C14.5294 19.7075 15.6487 18.5883 17.0294 18.5883H21.5C22.8807 18.5883 24 19.7075 24 21.0883V21.5C24 22.8807 22.8807 24 21.5 24H17.0294C15.6487 24 14.5294 22.8807 14.5294 21.5V21.0883Z"
 								fill={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 							/>
@@ -246,8 +240,7 @@
 								d="M1 3.5C1 2.11929 2.11929 1 3.5 1H7.97059C9.3513 1 10.4706 2.11929 10.4706 3.5V3.91177C10.4706 5.29248 9.3513 6.41177 7.97059 6.41177H3.5C2.11929 6.41177 1 5.29248 1 3.91177V3.5Z"
 								stroke={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 								stroke-width="1.5"
@@ -256,8 +249,7 @@
 								d="M1 12.9706C1 11.5899 2.11929 10.4706 3.5 10.4706H7.97059C9.3513 10.4706 10.4706 11.5899 10.4706 12.9706V21.5C10.4706 22.8807 9.3513 24 7.97059 24H3.5C2.11929 24 1 22.8807 1 21.5V12.9706Z"
 								stroke={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 								stroke-width="1.5"
@@ -266,8 +258,7 @@
 								d="M14.5294 3.5C14.5294 2.11929 15.6487 1 17.0294 1H21.5C22.8807 1 24 2.11929 24 3.5V12.0294C24 13.4101 22.8807 14.5294 21.5 14.5294H17.0294C15.6487 14.5294 14.5294 13.4101 14.5294 12.0294V3.5Z"
 								stroke={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 								stroke-width="1.5"
@@ -276,8 +267,7 @@
 								d="M14.5294 21.0883C14.5294 19.7075 15.6487 18.5883 17.0294 18.5883H21.5C22.8807 18.5883 24 19.7075 24 21.0883V21.5C24 22.8807 22.8807 24 21.5 24H17.0294C15.6487 24 14.5294 22.8807 14.5294 21.5V21.0883Z"
 								stroke={currentPath === '/agent-templates' ||
 								currentPath === '/create-agent' ||
-								currentPath === '/my-agents' ||
-								currentPath === '/monitor-agents'
+								currentPath === '/my-agents'
 									? '#23F784'
 									: '#BBD0FF'}
 								stroke-width="1.5"
@@ -302,12 +292,6 @@
 							<a
 								class={currentPath === '/my-agents' ? 'active-tab' : 'hover:text-[#23f784]'}
 								href="/my-agents">My Agents</a
-							>
-						</li>
-						<li>
-							<a
-								class={currentPath === '/monitor-agents' ? 'active-tab' : 'hover:text-[#23f784]'}
-								href="/monitor-agents">Monitor Agents</a
 							>
 						</li>
 					</ul>
@@ -344,27 +328,6 @@
 						/>
 					</svg>
 					My GPU
-				</a>
-			</li>
-			<li>
-				<a
-					class={currentPath === '/managed-training'
-						? 'active-tab relative'
-						: 'hover:text-[#23f784]'}
-					href="/managed-training"
-				>
-					{#if currentPath === '/managed-training'}
-						<ActiveAside />
-					{/if}
-					<svg width="16" height="16" viewBox="0 0 23 32" xmlns="http://www.w3.org/2000/svg">
-						<path
-							d="M14.1231 13.6317C14.0126 13.6317 13.9231 13.5421 13.9231 13.4317V1.60383C13.9231 1.41125 13.6776 1.32993 13.5626 1.48444L1.59411 17.5699C1.34868 17.8997 1.58411 18.3683 1.99525 18.3683H8.87694C8.98739 18.3683 9.07694 18.4579 9.07694 18.5683V30.3962C9.07694 30.5888 9.32243 30.6701 9.43739 30.5156L21.4059 14.4301C21.6513 14.1003 21.4159 13.6317 21.0047 13.6317H14.1231Z"
-							fill={currentPath === '/managed-training' ? '#23F784' : '#BBD0FF'}
-							stroke={currentPath === '/managed-training' ? '#23F784' : '#BBD0FF'}
-							stroke-width="1.5"
-						/>
-					</svg>
-					Managed Training
 				</a>
 			</li>
 		</ul>
