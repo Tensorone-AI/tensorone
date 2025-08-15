@@ -1,0 +1,8 @@
+version: "3.8"
+
+services:
+    cron-tasks:
+        build: .
+        ports:
+            - "5004:5004"
+        restart: unless-stopped
